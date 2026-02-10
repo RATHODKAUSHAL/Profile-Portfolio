@@ -2,110 +2,83 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useTheme } from "next-themes";
-import { Moon, Sun, Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Menu, X } from "lucide-react";
 
 const Header = () => {
   const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { theme, setTheme } = useTheme();
-
   useEffect(() => {
     setMounted(true);
   }, []);
 
   const navLinks = [
-    { name: "About", href: "#about" },
-    { name: "Projects", href: "#projects" },
-    { name: "Articles", href: "#articles" },
-    { name: "Contacts", href: "#contacts" },
+    { name: "Home", href: "/" },
+    { name: "About", href: "/about" },
+    { name: "Skills", href: "/skills" },
+    { name: "Projects", href: "/projects" },
+    { name: "Experience", href: "/experience" },
+    { name: "Contact", href: "/contact" },
   ];
 
   if (!mounted) return null;
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-dark-primary/80 backdrop-blur-md border-b border-dark-secondary">
-      <nav className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex flex-col font-fira text-light-primary">
-            <span title="Kaushal Rathod" className="text-lg font-semibold">KR.</span>
+    <header className="fixed left-0 right-0 top-0 z-50 border-b-4 border-black bg-white/90 backdrop-blur-[2px]">
+      <nav className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
+        <Link href="/" className="flex items-center gap-3">
+          <div className="soft-card soft-shadow-sm flex h-11 w-11 items-center justify-center text-sm font-bold">
+            DN
+          </div>
+          <div className="leading-tight">
+            <div className="text-lg font-semibold">Developer Name</div>
+            <div className="text-xs font-semibold uppercase text-black/60">
+              Full Stack Developer
+            </div>
+          </div>
+        </Link>
 
+        <div className="hidden items-center gap-6 text-sm font-semibold uppercase md:flex">
+          {navLinks.map((link) => (
+            <Link key={link.name} href={link.href} className="hover:underline">
+              {link.name}
+            </Link>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Link href="/contact" className="soft-btn hidden md:inline-flex">
+            Contact
           </Link>
+          <button
+            type="button"
+            className="soft-btn soft-btn-accent md:hidden"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
+          </button>
+        </div>
+      </nav>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+      {isMenuOpen && (
+        <div className="border-t-4 border-black bg-white px-6 pb-6 pt-4 md:hidden">
+          <div className="flex flex-col gap-4 text-sm font-semibold uppercase">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-light-secondary font-semibold hover:text-light-primary transition-colors duration-300 font-sans text-lg"
+                onClick={() => setIsMenuOpen(false)}
+                className="soft-card soft-shadow-sm px-4 py-3"
               >
                 {link.name}
               </Link>
             ))}
           </div>
-
-          {/* Right side - Language & Theme Toggle */}
-          <div className="flex items-center gap-4">
-
-            {/* Theme Toggle */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="rounded-full hover:bg-dark-secondary"
-            >
-              {theme === "dark" ? (
-                <Sun className="h-5 w-5 text-light-primary" />
-              ) : (
-                <Moon className="h-5 w-5 text-dark-primary" />
-              )}
-            </Button>
-
-            {/* Mobile Menu Button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden rounded-full hover:bg-dark-secondary"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              {isMenuOpen ? (
-                <X className="h-5 w-5 text-light-primary" />
-              ) : (
-                <Menu className="h-5 w-5 text-light-primary" />
-              )}
-            </Button>
-          </div>
         </div>
-
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden mt-4 pb-4 border-t border-dark-secondary pt-4 animate-fadeIn">
-            <div className="flex flex-col gap-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  onClick={() => setIsMenuOpen(false)}
-                  className="text-light-secondary hover:text-light-primary transition-colors duration-300 font-sans text-sm"
-                >
-                  {link.name}
-                </Link>
-              ))}
-              <div className="flex gap-4 text-xs font-sans text-light-secondary pt-2 border-t border-dark-secondary">
-                <button className="hover:text-light-primary transition-colors">
-                  En
-                </button>
-                <button className="hover:text-light-primary transition-colors">
-                  Ge
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </nav>
+      )}
     </header>
   );
 };

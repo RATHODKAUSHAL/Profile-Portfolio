@@ -19,6 +19,14 @@ const ClientLayout = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").catch(() => {
+        // Ignore registration errors to avoid blocking rendering.
+      });
+    }
+  }, []);
+
   const handleLoadingComplete = () => {
     setIsLoading(false);
   };

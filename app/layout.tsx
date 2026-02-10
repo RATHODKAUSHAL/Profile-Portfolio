@@ -24,41 +24,40 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: "#0f172a",
+  themeColor: "#ffeb3b",
 }
 
 // ✅ metadata WITHOUT viewport / themeColor
 export const metadata: Metadata = {
-  title: "Kaushal Rathod - Full-stack Developer",
+  title: "Developer Portfolio - Full Stack Developer",
   description:
-    "Portfolio of Kaushal Rathod, a full-stack developer with 2+ years of experience specializing in React, Vue, Node.js, and modern web technologies.",
+    "Personal developer portfolio with soft Neo-Brutalist UI and modern engineering focus.",
   keywords: [
     "Full-stack Developer",
     "React",
-    "Vue",
     "Node.js",
     "TypeScript",
     "Portfolio",
   ],
-  authors: [{ name: "Kaushal Rathod" }],
-  creator: "Kaushal Rathod",
+  authors: [{ name: "Developer Name" }],
+  creator: "Developer Name",
   manifest: "/manifest.json",
   icons: {
-    icon: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
+    icon: "/Images/user.png",
+    apple: "/Images/user.png",
   },
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://kaushalrathod.com/",
-    title: "Kaushal Rathod - Full-stack Developer",
+    url: "https://example.com/",
+    title: "Developer Portfolio - Full Stack Developer",
     description:
       "Portfolio showcasing projects and expertise in full-stack development",
-    siteName: "Kaushal Rathod Portfolio",
+    siteName: "Developer Portfolio",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Kaushal Rathod - Full-stack Developer",
+    title: "Developer Portfolio - Full Stack Developer",
     description:
       "Portfolio showcasing projects and expertise in full-stack development",
   },
@@ -76,7 +75,7 @@ export default function RootLayout({
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >

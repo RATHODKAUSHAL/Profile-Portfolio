@@ -29,59 +29,18 @@ const AboutSection = () => {
   return (
     <section id="about" className="min-h-screen py-20 px-4 bg-dark-primary">
       <div className="container mx-auto max-w-6xl">
-        {/* Section Header */}
-        <div className="mb-16 text-center">
-          <h2 className="text-sm font-fira text-light-secondary mb-4 tracking-widest">
-            ... /About me ...
-          </h2>
-        </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           {/* Left Side - Introduction & Photo */}
           <div className="space-y-8 animate-fadeIn">
             {/* Intro Text */}
             <div className="space-y-4">
               <h3 className="text-3xl md:text-4xl font-fira font-semibold text-light-primary">
-                Hello! I'm Nikita, I'm a{" "}
+                Hello! I'm Kaushal Rathod, I'm a{" "}
                 <span className="italic text-light-primary">full-stack developer</span>.
               </h3>
               <p className="text-light-secondary font-sans text-base leading-relaxed">
-                More than <span className="text-light-primary font-semibold">5 years</span> experience.
+                More than <span className="text-light-primary font-semibold">2 years</span> experience.
               </p>
-            </div>
-
-            {/* Photo */}
-            <div className="relative group max-w-md">
-              {/* Decorative background */}
-              <div className="absolute -inset-4 bg-gradient-to-br from-light-secondary/10 to-dark-secondary/10 rounded-3xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity"></div>
-              
-              {/* Image container */}
-              <div className="relative rounded-3xl overflow-hidden border border-dark-secondary group-hover:border-light-secondary/30 transition-all duration-300">
-                <div className="aspect-[3/4] bg-dark-secondary relative">
-                  {/* Placeholder for developer photo */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-dark-primary/80"></div>
-                  <Image
-                    src="/Images/user.png"
-                    alt="Nikita Khvatov - Full-stack Developer"
-                    fill
-                    className="object-cover"
-                    priority
-                    onError={(e) => {
-                      // Fallback if image doesn't exist
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
-                  {/* Fallback content */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <Code2 className="h-20 w-20 text-light-secondary/30 mx-auto mb-4" />
-                      <p className="text-light-secondary/50 font-fira text-sm">
-                        Developer Photo
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
 

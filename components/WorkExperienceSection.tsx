@@ -19,39 +19,30 @@ const WorkExperienceSection = () => {
   const experiences: WorkExperience[] = [
     {
       id: "1",
-      period: "2022 - Present",
-      duration: "1 year 1 month",
-      company: "iTHUB",
-      position: "Frontend developer | React & Vue",
-      description: "Leading frontend development initiatives and mentoring junior developers.",
-      technologies: ["React", "Vue", "TypeScript", "Next.js"]
+      period: "Feb 2025 - Present",
+      duration: "12 months",
+      company: "Trukky",
+      position: "Fullstack developer | NextJS & React",
+      description: "Developed and maintained large-scale React applications with focus on performance optimization.",
+      technologies: ["React", "Redux", "TypeScript", "NodeJS", "PostgreSQL"]
     },
     {
       id: "2",
-      period: "2021 - 2022",
-      duration: "8 months",
-      company: "VK Development Lab",
-      position: "Frontend developer | React",
-      description: "Developed and maintained large-scale React applications with focus on performance optimization.",
-      technologies: ["React", "Redux", "TypeScript", "Jest"]
+      period: "November 2020 - Jan 2025",
+      duration: "3 months",
+      company: "Maze technolabs",
+      position: "Frontend developer | React & NodeJS",
+      description: "Built full-stack applications using modern JavaScript frameworks and Python backend services.",
+      technologies: ["JavaScript", "ReactJS", "Node.js", "PostgreSQL"]
     },
     {
       id: "3",
-      period: "2020 - 2021",
+      period: "Jan-2024 - October 2020",
       duration: "9 months",
-      company: "SN Inc.",
-      position: "Fullstack developer | JavaScript & Python",
-      description: "Built full-stack applications using modern JavaScript frameworks and Python backend services.",
-      technologies: ["JavaScript", "Python", "Node.js", "PostgreSQL"]
-    },
-    {
-      id: "4",
-      period: "2018 - 2020",
-      duration: "1 year 11 months",
-      company: "Business Up",
-      position: "Fullstack developer | JavaScript & Python",
+      company: "Maze technolabs",
+      position: "Frontend developer | JavaScript & ReactJS",
       description: "Worked on various client projects, delivering end-to-end solutions from design to deployment.",
-      technologies: ["JavaScript", "Python", "Django", "React"]
+      technologies: ["JavaScript", "ReactJS", "Shadcn", "Mysql"]
     }
   ];
 
@@ -63,12 +54,8 @@ const WorkExperienceSection = () => {
         {/* Section Header */}
         <div className="mb-16">
           <div className="text-center mb-8">
-            <h2 className="text-sm font-fira text-light-secondary mb-4 tracking-widest">
-              ... /Work Experience ...
-            </h2>
             <div className="flex items-center justify-center gap-2 text-light-primary mt-6">
-              <Briefcase className="h-5 w-5" />
-              <span className="font-fira text-lg">Total Experience: {totalExperience}</span>
+              <span className="font-bold text-xl">Experience</span>
             </div>
           </div>
         </div>
@@ -94,15 +81,15 @@ const WorkExperienceSection = () => {
         {/* Summary Stats */}
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
           <StatCard 
-            number="4+"
+            number="2"
             label="Years Experience"
           />
           <StatCard 
-            number="10+"
+            number="6+"
             label="Projects Completed"
           />
           <StatCard 
-            number="15+"
+            number="10+"
             label="Technologies"
           />
         </div>

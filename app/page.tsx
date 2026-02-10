@@ -1,19 +1,13 @@
-import AboutSection from "@/components/AboutSection";
-import ArticlesSection from "@/components/ArticlesSection";
-import ContactSection from "@/components/ContactSection";
-import HeroSection from "@/components/HeroSection";
-import ProjectsSection from "@/components/ProjectsSection";
-import WorkExperienceSection from "@/components/WorkExperienceSection";
+import HomeCTA from "@/components/sections/HomeCTA";
+import HomeFeaturedProjects from "@/components/sections/HomeFeaturedProjects";
+import HomeHero from "@/components/sections/HomeHero";
 
 export default function Home() {
   return (
-    <>
-       <HeroSection />
-       <AboutSection />
-       <ProjectsSection />
-       <ArticlesSection />
-      <WorkExperienceSection />
-      <ContactSection />
-    </>
+    <div className="soft-grid-bg">
+      <HomeHero />
+      <HomeFeaturedProjects />
+      <HomeCTA />
+    </div>
   );
 }
