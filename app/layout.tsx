@@ -3,6 +3,7 @@ import { Fira_Code, Open_Sans } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import ClientLayout from "@/components/ClientLayout"
+import Script from "next/script"
 
 // Fonts
 const firaCode = Fira_Code({
@@ -61,6 +62,10 @@ export const metadata: Metadata = {
     description:
       "Portfolio showcasing projects and expertise in full-stack development",
   },
+  // 
+  //  verification: {
+  //   google: "GianrNYJnwhD4DHgw_SMpVb-c5zT7GFtPq_vKJs98do",
+  // },
 }
 
 export default function RootLayout({
@@ -73,6 +78,19 @@ export default function RootLayout({
       <body
         className={`${firaCode.variable} ${openSans.variable} antialiased`}
       >
+        <Script
+        src="https://www.googletagmanager.com/gtag/js?id=G-779KQ6LCER"
+        strategy="afterInteractive"
+      />
+
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-779KQ6LCER');
+        `}
+      </Script>
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
