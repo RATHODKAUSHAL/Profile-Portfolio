@@ -1,22 +1,22 @@
 const experiences = [
   {
     role: "Full Stack Developer",
-    company: "Logistics Studio",
+    company: "Trukky",
     period: "Feb 2025 - Present",
     summary:
       "Led full-stack delivery for logistics products, modernized UI, and optimized API performance.",
   },
   {
     role: "Frontend Developer",
-    company: "Product Lab",
-    period: "Jan 2024 - Jan 2025",
+    company: "Maze Technolabs",
+    period: "Mar 2024 - Jan 2025",
     summary:
       "Shipped React features, partnered with design, and improved mobile performance.",
   },
   {
-    role: "Engineering Intern",
-    company: "Studio X",
-    period: "Jun 2023 - Dec 2023",
+    role: "Jr. Developer Intern",
+    company: "Maze Technolabs",
+    period: "Jun 2024 - Mar 2024",
     summary:
       "Supported UI builds, assisted QA, and documented reusable patterns.",
   },
@@ -29,7 +29,7 @@ export default function ExperiencePage() {
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-6">
           <div>
             <div className="section-label bg-[#ffeb3b]">Experience</div>
-            <h1 className="display-font text-[52px] leading-[0.95] lg:text-[68px]">
+            <h1 className="display-font text-[40px] leading-[0.95] sm:text-[48px] lg:text-[68px]">
               Timeline of roles and impact.
             </h1>
             <p className="mt-4 max-w-2xl text-lg text-black/75">

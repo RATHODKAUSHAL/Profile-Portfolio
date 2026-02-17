@@ -44,7 +44,7 @@ const LoadingScreen = ({
             <Sparkles className="h-6 w-6" />
           </div>
           <div>
-            <div className="text-xl font-semibold">Developer Name</div>
+            <div className="text-xl font-semibold">Kaushal Rathod</div>
             <div className="text-xs font-semibold uppercase text-black/60">
               Loading Portfolio
             </div>

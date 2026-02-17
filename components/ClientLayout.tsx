@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import LoadingScreen from "./LoadingScreen";
 import Header from "./Header";
 import Footer from "./Footer";
+import PwaInstallBanner from "./PwaInstallBanner";
 
 const ClientLayout = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -19,14 +20,6 @@ const ClientLayout = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
-  useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/sw.js").catch(() => {
-        // Ignore registration errors to avoid blocking rendering.
-      });
-    }
-  }, []);
-
   const handleLoadingComplete = () => {
     setIsLoading(false);
   };
@@ -37,6 +30,7 @@ const ClientLayout = ({ children }: { children: React.ReactNode }) => {
       
       <div className={`transition-opacity duration-500 ${isLoading ? "opacity-0" : "opacity-100"}`}>
         <Header />
+        <PwaInstallBanner />
         <main className="min-h-screen">
           {children}
         </main>

@@ -11,6 +11,18 @@ const Header = () => {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    const media = window.matchMedia("(min-width: 768px)");
+    const handleChange = () => {
+      if (media.matches) {
+        setIsMenuOpen(false);
+      }
+    };
+    handleChange();
+    media.addEventListener("change", handleChange);
+    return () => media.removeEventListener("change", handleChange);
+  }, []);
+
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "About", href: "/about" },
@@ -27,10 +39,10 @@ const Header = () => {
       <nav className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
         <Link href="/" className="flex items-center gap-3">
           <div className="soft-card soft-shadow-sm flex h-11 w-11 items-center justify-center text-sm font-bold">
-            DN
+            KR
           </div>
           <div className="leading-tight">
-            <div className="text-lg font-semibold">Developer Name</div>
+            <div className="text-lg font-semibold">Kaushal Rathod</div>
             <div className="text-xs font-semibold uppercase text-black/60">
               Full Stack Developer
             </div>
@@ -45,13 +57,16 @@ const Header = () => {
           ))}
         </div>
 
-        <div className="flex items-center gap-3">
-          <Link href="/contact" className="soft-btn hidden md:inline-flex">
+        <div className="flex items-center gap-3 ">
+          <div className="max-sm:hidden">
+            <Link href="/contact" className="soft-btn md:inline-flex ">
             Contact
           </Link>
-          <button
+          </div>
+          <div className="md:hidden">
+            <button
             type="button"
-            className="soft-btn soft-btn-accent md:hidden"
+            className="soft-btn soft-btn-accent"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? (
@@ -60,6 +75,7 @@ const Header = () => {
               <Menu className="h-5 w-5" />
             )}
           </button>
+          </div>
         </div>
       </nav>
 

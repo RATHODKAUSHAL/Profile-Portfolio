@@ -26,7 +26,7 @@ export default function HomeFeaturedProjects() {
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <div className="section-label">Featured Projects</div>
-            <h2 className="display-font text-[40px] leading-[0.95] lg:text-[56px]">
+            <h2 className="display-font text-[32px] leading-[0.95] sm:text-[40px] lg:text-[56px]">
               A preview of my builds
             </h2>
           </div>

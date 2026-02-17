@@ -39,8 +39,8 @@ export const metadata: Metadata = {
     "TypeScript",
     "Portfolio",
   ],
-  authors: [{ name: "Developer Name" }],
-  creator: "Developer Name",
+  authors: [{ name: "Kaushal Rathod" }],
+  creator: "Kaushal Rathod",
   manifest: "/manifest.json",
   icons: {
     icon: "/Images/user.png",

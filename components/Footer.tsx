@@ -23,17 +23,17 @@ const Footer = () => {
   const socialLinks = [
     {
       icon: <Github className="h-5 w-5" />,
-      href: "https://github.com",
+      href: "https://github.com/RATHODKAUSHAL",
       label: "GitHub",
     },
     {
       icon: <Linkedin className="h-5 w-5" />,
-      href: "https://linkedin.com",
+      href: "https://www.linkedin.com/in/kaushal-rathod-dev/",
       label: "LinkedIn",
     },
     {
       icon: <Mail className="h-5 w-5" />,
-      href: "mailto:hello@example.com",
+      href: "mailto:rathodkaushal2001@gmail.com",
       label: "Email",
     },
   ];
@@ -54,7 +54,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-4">
             <Link href="/" className="inline-block">
-              <div className="text-2xl font-semibold">Developer Name</div>
+              <div className="text-2xl font-semibold">Kaushal Rathod</div>
               <div className="text-sm font-semibold uppercase text-black/60">
                 Full Stack Developer
               </div>
@@ -83,7 +83,7 @@ const Footer = () => {
               Contact
             </h4>
             <div className="mt-4 flex flex-col gap-2 text-sm text-black/70">
-              <span>hello@example.com</span>
+              <span>rathodkaushal2001@gamil.com</span>
               <span>Remote / Worldwide</span>
               <span>Available for collaborations</span>
             </div>
@@ -111,12 +111,7 @@ const Footer = () => {
         </div>
 
         <div className="mt-10 flex flex-col items-start justify-between gap-4 border-t-[3px] border-black/80 pt-6 text-xs font-semibold uppercase text-black/60 md:flex-row md:items-center">
-          <div>© {currentYear} Developer Portfolio</div>
-          <div className="flex flex-wrap gap-2">
-            <span className="soft-tag">Next.js</span>
-            <span className="soft-tag">TypeScript</span>
-            <span className="soft-tag">Tailwind</span>
-          </div>
+          <div>© {currentYear} Kaushal Rathod Portfolio</div>
         </div>
       </div>
     </footer>

@@ -11,7 +11,7 @@ export default function AboutPage() {
         <div className="mx-auto grid w-full max-w-6xl grid-cols-12 gap-8 px-6">
           <div className="col-span-12 lg:col-span-5">
             <div className="section-label bg-[#ffeb3b]">About</div>
-            <h1 className="display-font text-[52px] leading-[0.95] lg:text-[68px]">
+            <h1 className="display-font text-[40px] leading-[0.95] sm:text-[48px] lg:text-[68px]">
               Friendly builder with a bold UI lens.
             </h1>
             <p className="mt-4 text-lg text-black/75">
@@ -33,9 +33,9 @@ export default function AboutPage() {
               {highlights.map((item) => (
                 <div
                   key={item.label}
-                  className="soft-card soft-shadow-sm col-span-12 bg-[#2f5dff] px-4 py-4 text-white sm:col-span-4"
+                  className="soft-card soft-shadow-sm col-span-12 bg-[#2f5dff] px-4 py-4 sm:col-span-4"
                 >
-                  <div className="text-xs font-semibold uppercase text-white/70">
+                  <div className="text-xs font-semibold uppercase">
                     {item.label}
                   </div>
                   <div className="text-lg font-bold">{item.value}</div>

@@ -1,39 +1,26 @@
+import Image from "next/image";
+
 const projects = [
   {
-    title: "Logistics Job Portal",
+    title: "48jobs.com (Logistics Job Portal)",
+    image: "/Images/48jobs.png",
     description:
       "End-to-end platform with auth, workflows, and verification integrations.",
     tags: ["Next.js", "Node.js", "PostgreSQL"],
   },
   {
-    title: "Fleet Aggregation Platform",
+    title: "Logistics Management service",
+    image: "/",
     description:
       "Production dashboard for bookings, transport discovery, and analytics.",
-    tags: ["React", "TypeScript", "REST APIs"],
+    tags: ["Laravel", "React", "TypeScript", "Postgresql"],
   },
   {
-    title: "SaaS Admin Console",
+    title: "Zestify-Ecommernce Website",
+    image: "/",
     description:
       "Multi-tenant admin system with billing, user roles, and audit trails.",
     tags: ["Next.js", "Stripe", "Prisma"],
-  },
-  {
-    title: "Commerce Accelerator",
-    description:
-      "Fast, accessible storefront template with cart and inventory syncing.",
-    tags: ["Remix", "GraphQL", "Shopify"],
-  },
-  {
-    title: "Design System Kit",
-    description:
-      "Reusable component library with documentation and accessibility checks.",
-    tags: ["Storybook", "Tailwind", "Radix"],
-  },
-  {
-    title: "Portfolio Redesign",
-    description:
-      "Neo-Brutalist UI with soft curves, motion details, and responsive layouts.",
-    tags: ["Next.js", "Framer Motion", "Vercel"],
   },
 ];
 
@@ -44,7 +31,7 @@ export default function ProjectsPage() {
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-6">
           <div>
             <div className="section-label bg-[#ffeb3b]">Projects</div>
-            <h1 className="display-font text-[52px] leading-[0.95] lg:text-[68px]">
+            <h1 className="display-font text-[40px] leading-[0.95] sm:text-[48px] lg:text-[68px]">
               Build highlights and product work.
             </h1>
             <p className="mt-4 max-w-2xl text-lg text-black/75">
@@ -59,7 +46,7 @@ export default function ProjectsPage() {
                 className="soft-card soft-shadow col-span-12 flex flex-col gap-4 p-6 md:col-span-6 lg:col-span-4"
               >
                 <div className="flex h-40 items-center justify-center rounded-[22px] border-[3px] border-black bg-[#ffeb3b] text-sm font-semibold">
-                  Project Image
+                  <Image src={project.image} alt="project image" className="object-cover w-full" width={100} height={100}/>
                 </div>
                 <div className="text-lg font-bold">{project.title}</div>
                 <p className="text-sm text-black/70">{project.description}</p>
