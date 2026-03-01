@@ -4,6 +4,7 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import ClientLayout from "@/components/ClientLayout"
 import Script from "next/script"
+import { absoluteUrl, siteConfig } from "@/lib/site"
 
 // Fonts
 const firaCode = Fira_Code({
@@ -30,37 +31,48 @@ export const viewport: Viewport = {
 
 // ✅ metadata WITHOUT viewport / themeColor
 export const metadata: Metadata = {
-  title: "Developer Portfolio - Full Stack Developer",
-  description:
-    "Personal developer portfolio with soft Neo-Brutalist UI and modern engineering focus.",
-  keywords: [
-    "Full-stack Developer",
-    "React",
-    "Node.js",
-    "TypeScript",
-    "Portfolio",
-  ],
-  authors: [{ name: "Kaushal Rathod" }],
-  creator: "Kaushal Rathod",
+  metadataBase: new URL(siteConfig.siteUrl),
+  title: {
+    default: siteConfig.title,
+    template: `%s | ${siteConfig.name}`,
+  },
+  description: siteConfig.description,
+  keywords: siteConfig.keywords,
+  authors: [{ name: siteConfig.author.name }],
+  creator: siteConfig.author.name,
   manifest: "/manifest.json",
+  alternates: {
+    canonical: "/",
+  },
   icons: {
     icon: "/Images/user.png",
     apple: "/Images/user.png",
   },
   openGraph: {
     type: "website",
-    locale: "en_US",
-    url: "https://example.com/",
-    title: "Developer Portfolio - Full Stack Developer",
-    description:
-      "Portfolio showcasing projects and expertise in full-stack development",
-    siteName: "Developer Portfolio",
+    locale: siteConfig.locale,
+    url: siteConfig.siteUrl,
+    title: siteConfig.title,
+    description: siteConfig.description,
+    siteName: siteConfig.name,
+    images: [
+      {
+        url: "/Images/profileimage.jpeg",
+        width: 1200,
+        height: 630,
+        alt: "Kaushal Rathod portfolio preview",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Developer Portfolio - Full Stack Developer",
-    description:
-      "Portfolio showcasing projects and expertise in full-stack development",
+    title: siteConfig.title,
+    description: siteConfig.description,
+    images: ["/Images/profileimage.jpeg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
   // 
   //  verification: {
@@ -73,6 +85,39 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const personSchema = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: siteConfig.author.name,
+    jobTitle: siteConfig.author.role,
+    url: siteConfig.siteUrl,
+    image: absoluteUrl(siteConfig.author.image),
+    email: siteConfig.author.email,
+    sameAs: siteConfig.author.sameAs,
+  }
+
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: siteConfig.name,
+    url: siteConfig.siteUrl,
+    description: siteConfig.description,
+    author: {
+      "@type": "Person",
+      name: siteConfig.author.name,
+    },
+    inLanguage: "en-US",
+  }
+
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: siteConfig.name,
+    url: siteConfig.siteUrl,
+    logo: absoluteUrl("/Images/user.png"),
+    sameAs: siteConfig.author.sameAs,
+  }
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -91,6 +136,27 @@ export default function RootLayout({
           gtag('config', 'G-779KQ6LCER');
         `}
       </Script>
+        <Script
+          id="schema-person"
+          type="application/ld+json"
+          strategy="afterInteractive"
+        >
+          {JSON.stringify(personSchema)}
+        </Script>
+        <Script
+          id="schema-website"
+          type="application/ld+json"
+          strategy="afterInteractive"
+        >
+          {JSON.stringify(websiteSchema)}
+        </Script>
+        <Script
+          id="schema-organization"
+          type="application/ld+json"
+          strategy="afterInteractive"
+        >
+          {JSON.stringify(organizationSchema)}
+        </Script>
         <ThemeProvider
           attribute="class"
           defaultTheme="light"

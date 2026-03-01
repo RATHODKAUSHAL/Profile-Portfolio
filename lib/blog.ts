@@ -68,6 +68,174 @@ export const baseKeywords = [
 
 export const blogPosts: BlogPost[] = [
   {
+    slug: "full-stack-project-architecture-checklist-2026",
+    title: "Full-Stack Project Architecture Checklist (2026 Edition)",
+    description:
+      "A practical architecture checklist for shipping maintainable full-stack apps with Next.js, Node.js, and PostgreSQL.",
+    date: "2026-02-20",
+    dateLabel: "Feb 20, 2026",
+    readTime: "9 min read",
+    category: "Architecture",
+    tags: ["Full Stack", "Architecture", "Next.js"],
+    keywords: [
+      ...baseKeywords,
+      ...geoKeywords,
+      "full stack architecture checklist",
+      "next.js architecture",
+      "scalable web app architecture",
+    ],
+    author: {
+      name: "Kaushal Rathod",
+      title: "Full Stack Developer",
+    },
+    coverImage: "/Images/Office.jpg",
+    ogImage: "/Images/Office.jpg",
+    content: [
+      {
+        type: "paragraph",
+        text:
+          "When building a production application, architecture decisions should reduce future complexity, not increase it. This checklist is designed for teams that need to move fast while keeping code quality and reliability high.",
+      },
+      {
+        type: "heading",
+        text: "1. Define clear module boundaries",
+      },
+      {
+        type: "paragraph",
+        text:
+          "Split your app by domain responsibility: auth, projects, billing, notifications, and analytics. Avoid mixing unrelated features in the same route or service layer.",
+      },
+      {
+        type: "list",
+        items: [
+          "Create feature-specific folders for UI, logic, and API access.",
+          "Use shared utility modules only for truly cross-cutting logic.",
+          "Document ownership for each module.",
+        ],
+      },
+      {
+        type: "heading",
+        text: "2. Keep data contracts explicit",
+      },
+      {
+        type: "paragraph",
+        text:
+          "Use typed request and response contracts across frontend and backend boundaries. This prevents silent integration bugs and accelerates onboarding.",
+      },
+      {
+        type: "code",
+        language: "ts",
+        code:
+          "type ProjectSummary = {\n  id: string\n  name: string\n  status: \"active\" | \"archived\"\n  ownerId: string\n}\n",
+      },
+      {
+        type: "heading",
+        text: "3. Introduce performance budgets early",
+      },
+      {
+        type: "tip",
+        title: "Core Web Vitals baseline",
+        text:
+          "Set route-level budgets for LCP, INP, and CLS in your release checklist, and block merges when regressions exceed thresholds.",
+      },
+      {
+        type: "heading",
+        text: "4. Build observability from day one",
+      },
+      {
+        type: "paragraph",
+        text:
+          "Log user-impacting errors with route and request context. Add health checks and track error rates per feature to prioritize fixes quickly.",
+      },
+      {
+        type: "note",
+        title: "Final recommendation",
+        text:
+          "Treat architecture as a recurring review process every sprint, not a one-time setup task.",
+      },
+    ],
+  },
+  {
+    slug: "nextjs-seo-geo-content-framework-for-portfolios",
+    title: "Next.js SEO + GEO Content Framework for Developer Portfolios",
+    description:
+      "A repeatable content framework to help developer portfolios rank in search and get cited by AI assistants.",
+    date: "2026-01-30",
+    dateLabel: "Jan 30, 2026",
+    readTime: "8 min read",
+    category: "SEO",
+    tags: ["SEO", "GEO", "Content Strategy"],
+    keywords: [
+      ...baseKeywords,
+      ...geoKeywords,
+      "developer portfolio seo",
+      "geo content framework",
+      "ai search optimization",
+    ],
+    author: {
+      name: "Kaushal Rathod",
+      title: "Full Stack Developer",
+    },
+    coverImage: "/Images/image3.jpg",
+    ogImage: "/Images/image3.jpg",
+    content: [
+      {
+        type: "paragraph",
+        text:
+          "Modern discovery is no longer only about ranking on Google. AI assistants also parse, summarize, and cite structured pages. Your portfolio should be readable for both crawlers and LLM systems.",
+      },
+      {
+        type: "heading",
+        text: "1. Use one intent per page",
+      },
+      {
+        type: "paragraph",
+        text:
+          "Each page should answer one core question clearly. Example: Projects page answers what you built, with which technologies, and what outcomes were achieved.",
+      },
+      {
+        type: "heading",
+        text: "2. Write extraction-friendly sections",
+      },
+      {
+        type: "list",
+        items: [
+          "About: who you are and what you specialize in.",
+          "Skills: categorized stack with exact tool names.",
+          "Projects: problem, implementation, and result.",
+          "FAQ: direct question-answer pairs.",
+        ],
+      },
+      {
+        type: "example",
+        title: "Good factual sentence",
+        text:
+          "I am a full stack developer specializing in Next.js, React, Node.js, and TypeScript for performance-focused web applications.",
+      },
+      {
+        type: "heading",
+        text: "3. Pair metadata with schema",
+      },
+      {
+        type: "paragraph",
+        text:
+          "Route-level metadata, canonical URLs, Open Graph, and JSON-LD should describe the same reality. Inconsistencies reduce trust signals for both search and AI systems.",
+      },
+      {
+        type: "code",
+        language: "tsx",
+        code:
+          "export const metadata = {\n  title: \"Projects\",\n  description: \"Production projects with technologies and outcomes.\",\n  alternates: { canonical: \"/projects\" },\n}\n",
+      },
+      {
+        type: "quote",
+        text:
+          "Clear structure and factual writing increase the chance of correct AI citation.",
+        author: "Portfolio optimization principle",
+      },
+    ],
+  },
+  {
     slug: "nextjs-performance-playbook-india",
     title: "Next.js Performance Playbook for Indian Developer Teams",
     description:

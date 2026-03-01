@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 const statItems = [
   { label: "Experience", value: "2+ Years" },
@@ -8,25 +9,25 @@ const statItems = [
 
 export default function HomeHero() {
   return (
-    <section className="pt-28 lg:pt-32">
-      <div className="mx-auto grid w-full max-w-6xl grid-cols-12 gap-8 px-6">
-        <div className="col-span-12 flex flex-col gap-6 lg:col-span-7">
+    <section className="pt-24 lg:pt-32">
+      <div className="mx-auto grid w-full max-w-6xl grid-cols-12 gap-6 px-4 sm:gap-8 sm:px-6">
+        <div className="col-span-12 flex flex-col gap-5 sm:gap-6 lg:col-span-7">
           <span className="section-label bg-[#ffeb3b]">Kaushal Rathod</span>
-          <h1 className="display-font text-[42px] leading-[0.95] tracking-tight sm:text-[52px] lg:text-[84px]">
+          <h1 className="display-font text-[clamp(2.1rem,10vw,5.25rem)] leading-[0.95] tracking-tight">
             Full Stack Developer
           </h1>
-          <p className="max-w-xl text-lg text-black/75">
-            Friendly, modern product engineering with a Neo-Brutalist soul.
-            I design and build web apps that feel playful, reliable, and
-            effortless to use.
+          <p className="max-w-xl text-base text-black/75 sm:text-lg">
+            I am a full stack developer specializing in Next.js, React,
+            Node.js, and TypeScript. I design and build fast, accessible web
+            applications that are reliable in production.
           </p>
-          <div className="flex flex-wrap items-center gap-4">
-            <a className="soft-btn soft-btn-accent" href="/projects">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+            <Link className="soft-btn soft-btn-accent soft-btn-fluid sm:w-auto" href="/projects">
               View Projects
-            </a>
-            <a className="soft-btn soft-btn-dark" href="/contact">
+            </Link>
+            <Link className="soft-btn soft-btn-dark soft-btn-fluid sm:w-auto" href="/contact">
               Contact Me
-            </a>
+            </Link>
           </div>
           <div className="grid grid-cols-12 gap-4">
             {statItems.map((item) => (
@@ -43,7 +44,7 @@ export default function HomeHero() {
           </div>
         </div>
         <div className="col-span-12 lg:col-span-5">
-          <div className="soft-section flex h-full min-h-[360px] flex-col justify-between gap-6 bg-[#2f5dff] p-6 text-white">
+          <div className="soft-section flex h-full min-h-[320px] flex-col justify-between gap-5 bg-[#2f5dff] p-4 text-white sm:min-h-[360px] sm:gap-6 sm:p-6">
             <div className="text-xs font-semibold uppercase text-white/80">
               Developer Portrait
             </div>

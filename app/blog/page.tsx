@@ -3,6 +3,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { getBlogPosts, baseKeywords, geoKeywords } from "@/lib/blog"
+import { absoluteUrl } from "@/lib/site"
 
 const posts = getBlogPosts()
 
@@ -13,12 +14,15 @@ const pageDescription =
 export const metadata: Metadata = {
   title: pageTitle,
   description: pageDescription,
+  alternates: {
+    canonical: "/blog",
+  },
   keywords: [...baseKeywords, ...geoKeywords, "developer blog India", "Next.js insights"],
   openGraph: {
     type: "website",
     title: pageTitle,
     description: pageDescription,
-    url: "https://example.com/blog",
+    url: absoluteUrl("/blog"),
     siteName: "Kaushal Rathod Blog",
     images: [
       {
@@ -42,7 +46,7 @@ const blogSchema = {
   "@type": "CollectionPage",
   name: pageTitle,
   description: pageDescription,
-  url: "https://example.com/blog",
+  url: absoluteUrl("/blog"),
   hasPart: posts.map((post) => ({
     "@type": "BlogPosting",
     headline: post.title,
@@ -52,7 +56,7 @@ const blogSchema = {
       "@type": "Person",
       name: post.author.name,
     },
-    url: `https://example.com/blog/${post.slug}`,
+    url: absoluteUrl(`/blog/${post.slug}`),
   })),
 }
 
@@ -168,7 +172,7 @@ export default function BlogPage() {
               signals for India developers and fast, accessible delivery.
             </p>
           </div>
-          <Link href="/contact" className="soft-btn soft-btn-dark">
+          <Link href="/contact" className="soft-btn soft-btn-dark soft-btn-fluid sm:w-auto">
             Start a blog sprint
           </Link>
         </div>

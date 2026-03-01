@@ -1,12 +1,24 @@
+import type { Metadata } from "next";
+import Image from "next/image";
+
+export const metadata: Metadata = {
+  title: "Skills",
+  description:
+    "Technical skills of Kaushal Rathod across frontend, backend, databases, and developer tooling.",
+  alternates: {
+    canonical: "/skills",
+  },
+};
+
 const skillGroups = [
   {
     title: "Frontend",
     items: [
       { name: "React", icon: "/skills/react.png" },
       { name: "Next.js", icon: "/skills/nextjs.png" },
-      { name: "JavaScript", icon: "/skills/javascript.png" },
-      { name: "TypeScript", icon: "/skills/Typescript.png" },
-      { name: "Tailwind CSS", icon: "/skills/tailwindcss.png" },
+      { name: "JavaScript", icon: "/skills/JavaScript.png" },
+      { name: "TypeScript", icon: "/skills/TypeScript.png" },
+      { name: "Tailwind CSS", icon: "/skills/Tailwindcss.png" },
       { name: "shadcn", icon: "/skills/shadcn.png" },
     ],
     color: "bg-[#ffeb3b]",
@@ -17,7 +29,7 @@ const skillGroups = [
       { name: "Node.js", icon: "/skills/Node.js.png" },
       { name: "Express", icon: "/skills/Express.png" },
       { name: "REST APIs", icon: "/skills/RESTAPIs.png" },
-      { name: "Laravel", icon: "/skills/LARAVEL.png" },
+      { name: "Laravel", icon: "/skills/Laravel.png" },
       { name: "PHP", icon: "/skills/PHP.png" },
     ],
     color: "bg-[#2f5dff] text-white",
@@ -52,22 +64,22 @@ const highlights = [
 export default function SkillsPage() {
   return (
     <div className="soft-grid-bg">
-      <section className="pt-28 lg:pt-32">
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-6">
+      <section className="pt-24 lg:pt-32">
+        <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 sm:px-6">
           <div className="grid grid-cols-12 gap-8">
             <div className="col-span-12 lg:col-span-7">
               <div className="section-label bg-[#ffeb3b]">Skills</div>
-              <h1 className="display-font text-[40px] leading-[0.95] sm:text-[48px] lg:text-[68px]">
+              <h1 className="display-font text-[clamp(2rem,8vw,4.25rem)] leading-[0.95]">
                 Tools, patterns, and systems I ship with.
               </h1>
-              <p className="mt-4 max-w-2xl text-lg text-black/75">
+              <p className="mt-4 max-w-2xl text-base text-black/75 sm:text-lg">
                 A focused stack built for product velocity and durable UX. Each
                 category is curated for clarity, reliability, and speed in
                 production.
               </p>
             </div>
             <div className="col-span-12 lg:col-span-5">
-              <div className="soft-card soft-shadow flex h-full flex-col gap-4 bg-white p-6">
+              <div className="soft-card soft-shadow flex h-full flex-col gap-4 bg-white p-5 sm:p-6">
                 <div className="text-xs font-semibold uppercase text-black/60">
                   Stack Snapshot
                 </div>
@@ -75,7 +87,7 @@ export default function SkillsPage() {
                   {highlights.map((item) => (
                     <div
                       key={item.label}
-                      className="rounded-2xl border-[2px] border-black bg-[#f7f7f7] px-4 py-3 text-sm font-semibold text-black shadow-[3px_3px_0_0_rgba(0,0,0,1)]"
+                    className="rounded-2xl border-[2px] border-black bg-[#f7f7f7] px-3 py-3 text-sm font-semibold text-black shadow-[3px_3px_0_0_rgba(0,0,0,1)] sm:px-4"
                     >
                       <div className="text-[11px] uppercase text-black/60">
                         {item.label}
@@ -93,9 +105,9 @@ export default function SkillsPage() {
           </div>
           <div className="grid grid-cols-12 gap-6">
             {skillGroups.map((group) => (
-              <div
+              <section
                 key={group.title}
-                className="soft-card soft-shadow col-span-12 flex flex-col gap-4 p-6 sm:col-span-6"
+                className="soft-card soft-shadow col-span-12 flex flex-col gap-4 p-5 sm:col-span-6 sm:p-6"
               >
                 <div className={`flex items-center justify-between rounded-2xl border-[2px] border-black px-4 py-2 ${group.color}`}>
                   <span className="text-xs font-semibold uppercase">
@@ -105,23 +117,25 @@ export default function SkillsPage() {
                     {group.items.length} tools
                   </span>
                 </div>
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                <ul className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 sm:grid-cols-3">
                   {group.items.map((item) => (
-                    <div
+                    <li
                       key={item.name}
                       className="flex items-center gap-3 rounded-2xl border-[2px] border-black bg-white px-3 py-2 text-sm font-semibold text-black shadow-[3px_3px_0_0_rgba(0,0,0,1)]"
                     >
-                      <img
+                      <Image
                         src={item.icon}
                         alt={`${item.name} logo`}
                         className="h-6 w-6"
+                        width={24}
+                        height={24}
                         loading="lazy"
                       />
                       <span>{item.name}</span>
-                    </div>
+                    </li>
                   ))}
-                </div>
-              </div>
+                </ul>
+              </section>
             ))}
           </div>
         </div>

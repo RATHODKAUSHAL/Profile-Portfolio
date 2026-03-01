@@ -55,7 +55,7 @@ const PwaInstallBanner = () => {
   if (!isMobile || !isVisible) return null;
 
   return (
-    <div className="fixed inset-x-4 bottom-4 z-[9998]">
+    <div className="fixed inset-x-3 bottom-3 z-[9998] sm:inset-x-4 sm:bottom-4">
       <div className="soft-section flex flex-col gap-4 bg-white p-4 shadow-lg sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="text-sm font-semibold uppercase text-black/70">
@@ -65,11 +65,11 @@ const PwaInstallBanner = () => {
             Download the mobile PWA version
           </div>
         </div>
-        <div className="flex flex-wrap gap-3">
-          <button className="soft-btn soft-btn-accent" onClick={handleInstall}>
+        <div className="flex w-full flex-wrap gap-3 sm:w-auto">
+          <button className="soft-btn soft-btn-accent soft-btn-fluid sm:w-auto" onClick={handleInstall}>
             Install
           </button>
-          <button className="soft-btn" onClick={handleDismiss}>
+          <button className="soft-btn soft-btn-fluid sm:w-auto" onClick={handleDismiss}>
             Not now
           </button>
         </div>

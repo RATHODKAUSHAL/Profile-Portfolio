@@ -1,6 +1,8 @@
+import Link from "next/link";
+
 const featuredProjects = [
   {
-    title: "Logistics Job Portal",
+    title: "48Jobs.com",
     description:
       "End-to-end platform with auth, job workflows, and verification integrations.",
     tags: ["Next.js", "Node.js", "PostgreSQL"],
@@ -22,23 +24,23 @@ const featuredProjects = [
 export default function HomeFeaturedProjects() {
   return (
     <section className="py-16 lg:py-24">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-6">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <div className="section-label">Featured Projects</div>
-            <h2 className="display-font text-[32px] leading-[0.95] sm:text-[40px] lg:text-[56px]">
+            <h2 className="display-font text-[clamp(1.75rem,8vw,3.5rem)] leading-[0.95]">
               A preview of my builds
             </h2>
           </div>
-          <a className="soft-btn soft-btn-accent" href="/projects">
+          <Link className="soft-btn soft-btn-accent soft-btn-fluid sm:w-auto" href="/projects">
             See all projects
-          </a>
+          </Link>
         </div>
         <div className="grid grid-cols-12 gap-6">
           {featuredProjects.map((project) => (
             <div
               key={project.title}
-              className="soft-card soft-shadow col-span-12 flex flex-col gap-5 p-6 lg:col-span-4"
+              className="soft-card soft-shadow col-span-12 flex flex-col gap-5 p-5 sm:p-6 lg:col-span-4"
             >
               <div className="flex h-40 items-center justify-center rounded-[22px] border-[3px] border-black bg-[#ffeb3b] text-sm font-semibold">
                 Project Image
@@ -52,9 +54,9 @@ export default function HomeFeaturedProjects() {
                   </span>
                 ))}
               </div>
-              <a className="soft-btn soft-btn-dark w-fit" href="/projects">
+              <Link className="soft-btn soft-btn-dark w-fit" href="/projects">
                 View project
-              </a>
+              </Link>
             </div>
           ))}
         </div>

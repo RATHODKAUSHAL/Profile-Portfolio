@@ -10,13 +10,15 @@ import {
   geoKeywords,
   type BlogContentBlock,
 } from "@/lib/blog"
+import { absoluteUrl } from "@/lib/site"
 
 type PageProps = {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const post = getBlogPost(params.slug)
+  const { slug } = await params
+  const post = getBlogPost(slug)
   if (!post) {
     return {}
   }
@@ -27,12 +29,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title,
     description,
+    alternates: {
+      canonical: `/blog/${post.slug}`,
+    },
     keywords: [...baseKeywords, ...geoKeywords, ...post.keywords],
     openGraph: {
       type: "article",
       title,
       description,
-      url: `https://example.com/blog/${post.slug}`,
+      url: absoluteUrl(`/blog/${post.slug}`),
       images: [
         {
           url: post.ogImage,
@@ -106,8 +111,9 @@ const renderBlock = (block: BlogContentBlock, index: number) => {
   }
 }
 
-export default function BlogPostPage({ params }: PageProps) {
-  const post = getBlogPost(params.slug)
+export default async function BlogPostPage({ params }: PageProps) {
+  const { slug } = await params
+  const post = getBlogPost(slug)
   if (!post) {
     notFound()
   }
@@ -126,7 +132,7 @@ export default function BlogPostPage({ params }: PageProps) {
       name: post.author.name,
     },
     image: post.ogImage,
-    url: `https://example.com/blog/${post.slug}`,
+    url: absoluteUrl(`/blog/${post.slug}`),
     keywords: [...post.keywords, ...geoKeywords].join(", "),
   }
 
@@ -184,7 +190,7 @@ export default function BlogPostPage({ params }: PageProps) {
               discoverability, and performance for developer content.
             </p>
           </div>
-          <Link href="/contact" className="soft-btn soft-btn-accent">
+          <Link href="/contact" className="soft-btn soft-btn-accent soft-btn-fluid sm:w-auto">
             Book a consultation
           </Link>
         </div>
