@@ -4,20 +4,20 @@ import { siteConfig } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes = [
-    "",
-    "/about",
-    "/skills",
-    "/projects",
-    "/blog",
-    "/experience",
-    "/contact",
+    { path: "", priority: 1, changeFrequency: "weekly" as const },
+    { path: "/about", priority: 0.8, changeFrequency: "monthly" as const },
+    { path: "/skills", priority: 0.8, changeFrequency: "monthly" as const },
+    { path: "/projects", priority: 0.9, changeFrequency: "monthly" as const },
+    { path: "/blog", priority: 0.9, changeFrequency: "weekly" as const },
+    { path: "/experience", priority: 0.8, changeFrequency: "monthly" as const },
+    { path: "/contact", priority: 0.7, changeFrequency: "yearly" as const },
   ];
 
   const staticPages: MetadataRoute.Sitemap = routes.map((route) => ({
-    url: `${siteConfig.siteUrl}${route}`,
-    lastModified: new Date(),
-    changeFrequency: route === "" ? "weekly" : "monthly",
-    priority: route === "" ? 1 : 0.7,
+    url: `${siteConfig.siteUrl}${route.path}`,
+    lastModified: new Date("2026-07-22"),
+    changeFrequency: route.changeFrequency,
+    priority: route.priority,
   }));
 
   const blogPages: MetadataRoute.Sitemap = getBlogPosts().map((post) => ({
@@ -25,6 +25,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: new Date(post.date),
     changeFrequency: "monthly",
     priority: 0.8,
+    images: [`${siteConfig.siteUrl}${post.ogImage}`],
   }));
 
   return [...staticPages, ...blogPages];

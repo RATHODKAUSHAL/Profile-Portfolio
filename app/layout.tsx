@@ -32,6 +32,7 @@ export const viewport: Viewport = {
 // ✅ metadata WITHOUT viewport / themeColor
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.siteUrl),
+  applicationName: siteConfig.name,
   title: {
     default: siteConfig.title,
     template: `%s | ${siteConfig.name}`,
@@ -40,7 +41,6 @@ export const metadata: Metadata = {
   keywords: siteConfig.keywords,
   authors: [{ name: siteConfig.author.name }],
   creator: siteConfig.author.name,
-  manifest: "/manifest.json",
   alternates: {
     canonical: "/",
   },
@@ -73,6 +73,19 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  referrer: "origin-when-cross-origin",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
   },
   // 
   //  verification: {
@@ -88,12 +101,24 @@ export default function RootLayout({
   const personSchema = {
     "@context": "https://schema.org",
     "@type": "Person",
+    "@id": `${siteConfig.siteUrl}/#person`,
     name: siteConfig.author.name,
     jobTitle: siteConfig.author.role,
     url: siteConfig.siteUrl,
     image: absoluteUrl(siteConfig.author.image),
     email: siteConfig.author.email,
     sameAs: siteConfig.author.sameAs,
+    knowsAbout: [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "Node.js",
+      "React Native",
+      "Expo",
+      "Android application development",
+      "PostgreSQL",
+      "Technical SEO",
+    ],
   }
 
   const websiteSchema = {
@@ -104,18 +129,11 @@ export default function RootLayout({
     description: siteConfig.description,
     author: {
       "@type": "Person",
+      "@id": `${siteConfig.siteUrl}/#person`,
       name: siteConfig.author.name,
     },
+    publisher: { "@id": `${siteConfig.siteUrl}/#person` },
     inLanguage: "en-US",
-  }
-
-  const organizationSchema = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: siteConfig.name,
-    url: siteConfig.siteUrl,
-    logo: absoluteUrl("/Images/user.png"),
-    sameAs: siteConfig.author.sameAs,
   }
 
   return (
@@ -136,27 +154,14 @@ export default function RootLayout({
           gtag('config', 'G-779KQ6LCER');
         `}
       </Script>
-        <Script
-          id="schema-person"
+        <script
           type="application/ld+json"
-          strategy="afterInteractive"
-        >
-          {JSON.stringify(personSchema)}
-        </Script>
-        <Script
-          id="schema-website"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+        />
+        <script
           type="application/ld+json"
-          strategy="afterInteractive"
-        >
-          {JSON.stringify(websiteSchema)}
-        </Script>
-        <Script
-          id="schema-organization"
-          type="application/ld+json"
-          strategy="afterInteractive"
-        >
-          {JSON.stringify(organizationSchema)}
-        </Script>
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
         <ThemeProvider
           attribute="class"
           defaultTheme="light"

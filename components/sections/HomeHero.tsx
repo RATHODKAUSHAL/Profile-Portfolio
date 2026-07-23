@@ -3,7 +3,7 @@ import Link from "next/link";
 
 const statItems = [
   { label: "Experience", value: "2+ Years" },
-  { label: "Projects", value: "18+ Shipped" },
+  { label: "Projects", value: "10+ Shipped" },
   { label: "Focus", value: "Full Stack" },
 ];
 
@@ -44,14 +44,10 @@ export default function HomeHero() {
           </div>
         </div>
         <div className="col-span-12 lg:col-span-5">
-          <div className="soft-section flex h-full min-h-[320px] flex-col justify-between gap-5 bg-[#2f5dff] p-4 text-white sm:min-h-[360px] sm:gap-6 sm:p-6">
-            <div className="text-xs font-semibold uppercase text-white/80">
-              Developer Portrait
-            </div>
             <div className="relative overflow-hidden rounded-[22px] border-[3px] border-black bg-white">
-              <div className="relative aspect-[4/5] w-full">
+              <div className="relative aspect-4/5 w-full">
                 <Image
-                  src="/Images/profileimage.jpeg"
+                  src="/Images/profile.png"
                   alt="Kaushal Rathod portrait"
                   fill
                   sizes="(max-width: 1024px) 100vw, 40vw"
@@ -60,14 +56,6 @@ export default function HomeHero() {
                 />
               </div>
             </div>
-            <div className="flex flex-wrap gap-2">
-              {["UI Systems", "APIs", "Performance", "Design"].map((tag) => (
-                <span key={tag} className="soft-tag bg-white text-black">
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
     </section>

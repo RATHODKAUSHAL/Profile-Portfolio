@@ -456,6 +456,55 @@ canvas {
   color: #111111;
 }
 
+.blog-answer-box {
+  margin-bottom: 2rem;
+  display: grid;
+  gap: 1rem;
+  border: 3px solid var(--neo-black);
+  border-radius: var(--neo-radius-lg);
+  padding: 1.25rem;
+  background: #fffbea;
+  box-shadow: var(--neo-soft-shadow-sm);
+}
+
+.blog-answer-box .section-label {
+  width: fit-content;
+}
+
+.blog-answer-box ul {
+  display: grid;
+  gap: 0.65rem;
+  padding-left: 1.25rem;
+  list-style: disc;
+  line-height: 1.65;
+  color: #1d1d1d;
+}
+
+.blog-faq,
+.blog-sources {
+  margin-top: 2.5rem;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.blog-sources {
+  border-top: 3px solid var(--neo-black);
+  padding-top: 1.5rem;
+}
+
+.blog-sources ul {
+  display: grid;
+  gap: 0.65rem;
+  list-style: disc;
+  padding-left: 1.25rem;
+}
+
+.blog-sources a {
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .blog-prose-heading {
   font-size: clamp(1.4rem, 2vw, 1.8rem);
   font-weight: 700;

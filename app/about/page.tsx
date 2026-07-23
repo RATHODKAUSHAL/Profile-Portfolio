@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 const highlights = [
   { label: "Experience", value: "2+ Years" },
-  { label: "Projects", value: "18+ Shipped" },
+  { label: "Projects", value: "10+ Shipped" },
   { label: "Tools", value: "25+ Systems" },
 ];
 

@@ -2,10 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const media = window.matchMedia("(min-width: 768px)");
@@ -29,6 +31,9 @@ const Header = () => {
     { name: "Contact", href: "/contact" },
   ];
 
+  const isActive = (href: string) =>
+    href === "/" ? pathname === href : pathname.startsWith(href);
+
   return (
     <header className="fixed left-0 right-0 top-0 z-50 border-b-4 border-black bg-white/90 backdrop-blur-[2px]">
       <nav
@@ -49,7 +54,16 @@ const Header = () => {
 
         <div className="hidden items-center gap-6 text-sm font-semibold uppercase md:flex">
           {navLinks.map((link) => (
-            <Link key={link.name} href={link.href} className="hover:underline">
+            <Link
+              key={link.name}
+              href={link.href}
+              aria-current={isActive(link.href) ? "page" : undefined}
+              className={`rounded-full border-2 px-3 py-1.5 transition-[background-color,transform,box-shadow] duration-200 hover:-translate-y-0.5 ${
+                isActive(link.href)
+                  ? "border-black bg-[#ffeb3b] shadow-[3px_3px_0_0_rgba(0,0,0,1)]"
+                  : "border-transparent hover:border-black hover:bg-[#fff9c4]"
+              }`}
+            >
               {link.name}
             </Link>
           ))}
@@ -92,7 +106,12 @@ const Header = () => {
                 key={link.name}
                 href={link.href}
                 onClick={() => setIsMenuOpen(false)}
-                className="soft-card soft-shadow-sm px-4 py-3"
+                aria-current={isActive(link.href) ? "page" : undefined}
+                className={`rounded-2xl border-[3px] border-black px-4 py-3 transition-colors ${
+                  isActive(link.href)
+                    ? "bg-[#ffeb3b] shadow-[4px_4px_0_0_rgba(0,0,0,0.18)]"
+                    : "bg-white"
+                }`}
               >
                 {link.name}
               </Link>

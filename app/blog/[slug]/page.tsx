@@ -10,7 +10,7 @@ import {
   geoKeywords,
   type BlogContentBlock,
 } from "@/lib/blog"
-import { absoluteUrl } from "@/lib/site"
+import { absoluteUrl, siteConfig } from "@/lib/site"
 
 type PageProps = {
   params: Promise<{ slug: string }>
@@ -29,6 +29,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title,
     description,
+    category: post.category,
+    authors: [{ name: post.author.name, url: siteConfig.author.sameAs[1] }],
+    creator: post.author.name,
+    publisher: post.author.name,
     alternates: {
       canonical: `/blog/${post.slug}`,
     },
@@ -47,6 +51,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         },
       ],
       publishedTime: post.date,
+      modifiedTime: post.date,
+      section: post.category,
+      tags: post.tags,
       authors: [post.author.name],
     },
     twitter: {
@@ -55,12 +62,25 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description,
       images: [post.ogImage],
     },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
+    },
   }
 }
 
 export function generateStaticParams() {
   return getBlogPosts().map((post) => ({ slug: post.slug }))
 }
+
+export const dynamicParams = false
 
 const renderBlock = (block: BlogContentBlock, index: number) => {
   switch (block.type) {
@@ -120,20 +140,88 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   const relatedPosts = getBlogPosts().filter((item) => item.slug !== post.slug)
 
+  const wordCount = post.content.reduce((total, block) => {
+    if (block.type === "list") {
+      return total + block.items.join(" ").split(/\s+/).length
+    }
+    if (block.type === "code") {
+      return total + block.code.split(/\s+/).length
+    }
+    return total + block.text.split(/\s+/).length
+  }, 0)
+
   const postSchema = {
     "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: post.title,
-    description: post.description,
-    datePublished: post.date,
-    dateModified: post.date,
-    author: {
-      "@type": "Person",
-      name: post.author.name,
-    },
-    image: post.ogImage,
-    url: absoluteUrl(`/blog/${post.slug}`),
-    keywords: [...post.keywords, ...geoKeywords].join(", "),
+    "@graph": [
+      {
+        "@type": "BlogPosting",
+        "@id": `${absoluteUrl(`/blog/${post.slug}`)}#article`,
+        mainEntityOfPage: {
+          "@type": "WebPage",
+          "@id": absoluteUrl(`/blog/${post.slug}`),
+        },
+        headline: post.title,
+        description: post.description,
+        datePublished: post.date,
+        dateModified: post.date,
+        articleSection: post.category,
+        wordCount,
+        author: {
+          "@type": "Person",
+          "@id": `${siteConfig.siteUrl}/#person`,
+          name: post.author.name,
+          url: siteConfig.siteUrl,
+          sameAs: siteConfig.author.sameAs,
+        },
+        publisher: {
+          "@type": "Person",
+          "@id": `${siteConfig.siteUrl}/#person`,
+          name: post.author.name,
+        },
+        image: absoluteUrl(post.ogImage),
+        url: absoluteUrl(`/blog/${post.slug}`),
+        keywords: [...post.keywords, ...geoKeywords].join(", "),
+        inLanguage: "en-US",
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: absoluteUrl("/"),
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Blog",
+            item: absoluteUrl("/blog"),
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: post.title,
+            item: absoluteUrl(`/blog/${post.slug}`),
+          },
+        ],
+      },
+      ...(post.faqs
+        ? [
+            {
+              "@type": "FAQPage",
+              mainEntity: post.faqs.map((faq) => ({
+                "@type": "Question",
+                name: faq.question,
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: faq.answer,
+                },
+              })),
+            },
+          ]
+        : []),
+    ],
   }
 
   return (
@@ -150,7 +238,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           <div className="blog-article-meta">
             <span className="blog-meta-chip">
               <Calendar className="h-4 w-4" />
-              {post.dateLabel}
+              <time dateTime={post.date}>{post.dateLabel}</time>
             </span>
             <span className="blog-meta-chip">
               <Clock className="h-4 w-4" />
@@ -176,7 +264,54 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
         </header>
 
+        {post.takeaways && (
+          <aside className="blog-answer-box" aria-labelledby="quick-answer-title">
+            <span className="section-label bg-[#ffeb3b]">Quick answer</span>
+            <h2 id="quick-answer-title" className="display-font text-2xl">
+              What you need to know
+            </h2>
+            <ul>
+              {post.takeaways.map((takeaway) => (
+                <li key={takeaway}>{takeaway}</li>
+              ))}
+            </ul>
+          </aside>
+        )}
+
         <section className="blog-prose">{post.content.map(renderBlock)}</section>
+
+        {post.faqs && (
+          <section className="blog-faq" aria-labelledby="article-faq-title">
+            <h2 id="article-faq-title" className="display-font text-3xl">
+              Frequently asked questions
+            </h2>
+            <div className="grid gap-4">
+              {post.faqs.map((faq) => (
+                <article key={faq.question} className="soft-card soft-shadow-sm p-5">
+                  <h3 className="font-bold">{faq.question}</h3>
+                  <p className="mt-2 text-sm leading-6 text-black/75">{faq.answer}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {post.sources && (
+          <section className="blog-sources" aria-labelledby="article-sources-title">
+            <h2 id="article-sources-title" className="display-font text-2xl">
+              Official resources
+            </h2>
+            <ul>
+              {post.sources.map((source) => (
+                <li key={source.url}>
+                  <a href={source.url} target="_blank" rel="noreferrer">
+                    {source.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
       </article>
 
       <section className="blog-cta blog-cta-article">

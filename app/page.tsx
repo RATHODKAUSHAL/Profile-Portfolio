@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     url: siteConfig.siteUrl,
     images: [
       {
-        url: "/Images/profileimage.jpeg",
+        url: "/Images/profile.png",
         width: 1200,
         height: 630,
         alt: "Kaushal Rathod portfolio home page",

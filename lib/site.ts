@@ -1,11 +1,20 @@
+const deploymentHost =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  process.env.VERCEL_PROJECT_PRODUCTION_URL ||
+  process.env.VERCEL_URL;
+
+const siteUrl = deploymentHost
+  ? deploymentHost.startsWith("http")
+    ? deploymentHost.replace(/\/$/, "")
+    : `https://${deploymentHost.replace(/\/$/, "")}`
+  : "http://localhost:3000";
+
 export const siteConfig = {
   name: "Kaushal Rathod Portfolio",
   title: "Kaushal Rathod | Full Stack Developer",
   description:
     "Kaushal Rathod is a full stack developer specializing in Next.js, React, Node.js, TypeScript, and scalable web applications.",
-  siteUrl:
-    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-    "https://example.com",
+  siteUrl,
   locale: "en_US",
   author: {
     name: "Kaushal Rathod",

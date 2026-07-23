@@ -43,6 +43,15 @@ export type BlogPost = {
   }
   coverImage: string
   ogImage: string
+  takeaways?: string[]
+  faqs?: Array<{
+    question: string
+    answer: string
+  }>
+  sources?: Array<{
+    label: string
+    url: string
+  }>
   content: BlogContentBlock[]
 }
 
@@ -67,6 +76,192 @@ export const baseKeywords = [
 ]
 
 export const blogPosts: BlogPost[] = [
+  {
+    slug: "today-i-learned-expo-react-native-push-notifications",
+    title: "Today I Learned: Push Notifications in Expo React Native",
+    description:
+      "A practical walkthrough of Expo push notifications: permissions, Android channels, Expo push tokens, EAS credentials, listeners, testing, and lessons learned.",
+    date: "2026-07-22",
+    dateLabel: "July 22, 2026",
+    readTime: "9 min read",
+    category: "Mobile Development",
+    tags: ["Expo", "React Native", "Push Notifications", "Android"],
+    keywords: [
+      ...baseKeywords,
+      ...geoKeywords,
+      "Expo push notifications",
+      "React Native push notifications",
+      "expo-notifications tutorial",
+      "Expo Android notification channel",
+      "ExpoPushToken",
+      "EAS push notification credentials",
+    ],
+    author: {
+      name: "Kaushal Rathod",
+      title: "Full Stack & Mobile Application Developer",
+    },
+    coverImage: "/Images/image1.jpg",
+    ogImage: "/Images/image1.jpg",
+    takeaways: [
+      "Remote push notifications require a development build; Expo Go on Android does not support them from SDK 53 onward.",
+      "Create an Android notification channel before requesting permission so the Android 13 prompt can appear correctly.",
+      "Generate the Expo push token with the EAS project ID, store it per device, and handle token rotation and delivery receipts.",
+      "Test foreground receipt, background delivery, notification taps, and cold starts as separate application states.",
+    ],
+    faqs: [
+      {
+        question: "Can Expo push notifications be tested in Expo Go?",
+        answer:
+          "Local notifications can still work in Expo Go, but remote push notifications require a development build. On Android, remote push support was removed from Expo Go starting with SDK 53.",
+      },
+      {
+        question: "Why does Android need a notification channel before permission is requested?",
+        answer:
+          "On Android 13, the system permission prompt does not appear until the app has created at least one notification channel. Create the channel before calling the permission API.",
+      },
+      {
+        question: "What is the difference between an Expo push token and a native device token?",
+        answer:
+          "An Expo push token is used with the Expo Push Service. A native device token is used when your backend communicates directly with FCM for Android or APNs for iOS.",
+      },
+    ],
+    sources: [
+      {
+        label: "Expo push notifications setup",
+        url: "https://docs.expo.dev/push-notifications/push-notifications-setup/",
+      },
+      {
+        label: "Expo Notifications API reference",
+        url: "https://docs.expo.dev/versions/latest/sdk/notifications/",
+      },
+      {
+        label: "Send notifications with the Expo Push Service",
+        url: "https://docs.expo.dev/push-notifications/sending-notifications/",
+      },
+    ],
+    content: [
+      {
+        type: "paragraph",
+        text:
+          "Today I learned that push notifications in Expo are not just one API call. A dependable implementation is a small delivery system: ask for permission at the right time, configure each platform, obtain and store a token, send through a trusted server, and respond correctly when a user taps a notification.",
+      },
+      {
+        type: "heading",
+        text: "The mental model: local and remote notifications",
+      },
+      {
+        type: "paragraph",
+        text:
+          "Local notifications are scheduled by the application on the device. Remote push notifications begin on a server, travel through the Expo Push Service or directly through FCM and APNs, and are delivered by the operating system. The expo-notifications library can handle both, but remote push testing needs a development build.",
+      },
+      {
+        type: "note",
+        title: "Important development-build requirement",
+        text:
+          "Remote push notifications are unavailable in Expo Go on Android from SDK 53 onward. Use an EAS development build or a locally compiled native build for realistic testing.",
+      },
+      {
+        type: "heading",
+        text: "1. Install and configure expo-notifications",
+      },
+      {
+        type: "code",
+        language: "bash",
+        code: "npx expo install expo-notifications expo-constants",
+      },
+      {
+        type: "paragraph",
+        text:
+          "The config plugin applies notification settings during the native build. Because these are build-time settings, rebuild the application after changing the plugin, Android icon, color, channel, or native credentials.",
+      },
+      {
+        type: "code",
+        language: "json",
+        code:
+          "{\n  \"expo\": {\n    \"plugins\": [\n      [\n        \"expo-notifications\",\n        {\n          \"icon\": \"./assets/notification-icon.png\",\n          \"color\": \"#ffeb3b\",\n          \"defaultChannel\": \"default\"\n        }\n      ]\n    ]\n  }\n}",
+      },
+      {
+        type: "tip",
+        title: "Android icon lesson",
+        text:
+          "Use an all-white notification icon with a transparent background. Android applies the configured color as a tint, so a regular multicolor app icon will not render as expected.",
+      },
+      {
+        type: "heading",
+        text: "2. Request permission and create the Android channel",
+      },
+      {
+        type: "paragraph",
+        text:
+          "On Android, create the notification channel before asking for permission. This ordering matters on Android 13 because the system prompt does not appear until a channel exists.",
+      },
+      {
+        type: "code",
+        language: "tsx",
+        code:
+          "import { Platform } from \"react-native\";\nimport * as Notifications from \"expo-notifications\";\nimport Constants from \"expo-constants\";\n\nNotifications.setNotificationHandler({\n  handleNotification: async () => ({\n    shouldPlaySound: true,\n    shouldSetBadge: false,\n    shouldShowBanner: true,\n    shouldShowList: true,\n  }),\n});\n\nexport async function registerForPushNotifications() {\n  if (Platform.OS === \"android\") {\n    await Notifications.setNotificationChannelAsync(\"default\", {\n      name: \"Default\",\n      importance: Notifications.AndroidImportance.MAX,\n    });\n  }\n\n  const current = await Notifications.getPermissionsAsync();\n  const status = current.status === \"granted\"\n    ? current.status\n    : (await Notifications.requestPermissionsAsync()).status;\n\n  if (status !== \"granted\") return null;\n\n  const projectId =\n    Constants.expoConfig?.extra?.eas?.projectId ??\n    Constants.easConfig?.projectId;\n\n  if (!projectId) throw new Error(\"EAS project ID is missing\");\n\n  return (\n    await Notifications.getExpoPushTokenAsync({ projectId })\n  ).data;\n}",
+      },
+      {
+        type: "heading",
+        text: "3. Store tokens as device records, not user fields",
+      },
+      {
+        type: "paragraph",
+        text:
+          "One user can sign in on several devices, and push tokens can change. I learned to store a record for each installation with the user ID, push token, platform, app version, enabled state, and last-seen time. The app should also listen for token changes and update the server instead of assuming a token lasts forever.",
+      },
+      {
+        type: "heading",
+        text: "4. Send from a server and inspect receipts",
+      },
+      {
+        type: "code",
+        language: "ts",
+        code:
+          "await fetch(\"https://exp.host/--/api/v2/push/send\", {\n  method: \"POST\",\n  headers: {\n    Accept: \"application/json\",\n    \"Content-Type\": \"application/json\",\n  },\n  body: JSON.stringify({\n    to: expoPushToken,\n    title: \"Order update\",\n    body: \"Your order is now in transit.\",\n    data: { screen: \"OrderDetails\", orderId: \"order_123\" },\n  }),\n});",
+      },
+      {
+        type: "paragraph",
+        text:
+          "The send response is only a ticket showing that Expo accepted the message. Production systems should later check push receipts, remove tokens reported as unregistered, retry temporary failures with backoff, and avoid sending sensitive information in the visible notification body.",
+      },
+      {
+        type: "heading",
+        text: "5. Handle receipt and user interaction separately",
+      },
+      {
+        type: "code",
+        language: "tsx",
+        code:
+          "useEffect(() => {\n  const received = Notifications.addNotificationReceivedListener(\n    notification => {\n      console.log(\"Received\", notification.request.content.data);\n    },\n  );\n\n  const responded = Notifications.addNotificationResponseReceivedListener(\n    response => {\n      const data = response.notification.request.content.data;\n      // Validate data, then navigate to the intended screen.\n    },\n  );\n\n  return () => {\n    received.remove();\n    responded.remove();\n  };\n}, []);",
+      },
+      {
+        type: "paragraph",
+        text:
+          "Receiving a notification while the app is open and tapping one from the notification tray are different events. I now test foreground, background, and terminated states independently, including malformed or stale navigation data.",
+      },
+      {
+        type: "heading",
+        text: "What I learned from the implementation",
+      },
+      {
+        type: "list",
+        items: [
+          "Ask for permission after explaining the value, not immediately on first launch.",
+          "Treat push tokens as rotating device credentials and never as permanent user identifiers.",
+          "Keep notification data small, validate it before navigation, and fetch fresh private data after the app opens.",
+          "Use delivery receipts to clean invalid tokens and distinguish accepted messages from delivered notifications.",
+          "Test real builds and release behavior because native credentials and debug behavior can differ.",
+        ],
+      },
+      {
+        type: "note",
+        title: "Final takeaway",
+        text:
+          "The API surface is small, but reliable push notifications depend on permission UX, native configuration, token lifecycle, server-side delivery, and app-state testing working together.",
+      },
+    ],
+  },
   {
     slug: "full-stack-project-architecture-checklist-2026",
     title: "Full-Stack Project Architecture Checklist (2026 Edition)",
