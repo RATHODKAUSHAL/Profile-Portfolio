@@ -2,33 +2,34 @@ import type { Metadata } from "next";
 import HomeCTA from "@/components/sections/HomeCTA";
 import HomeFeaturedProjects from "@/components/sections/HomeFeaturedProjects";
 import HomeHero from "@/components/sections/HomeHero";
+import HomeLatestPosts from "@/components/sections/HomeLatestPosts";
 import HomeExpertise, { homeFaqs } from "@/components/sections/HomeExpertise";
 import JsonLd from "@/components/JsonLd";
 import { absoluteUrl, siteConfig } from "@/lib/site";
 import { personId, websiteId } from "@/lib/seo";
 
+const pageTitle = "Kaushal Rathod | Software Developer, Web & Mobile Apps";
+const pageDescription =
+  "Kaushal Rathod is a software developer in Ahmedabad, India, building full-stack web apps and React Native mobile apps. See his portfolio and get in touch.";
+
 export const metadata: Metadata = {
   title: {
-    absolute: "Kaushal Rathod | Full Stack & Mobile App Developer",
+    absolute: pageTitle,
   },
-  description:
-    "Portfolio of Kaushal Rathod, an Ahmedabad-based full stack and mobile app developer building with Next.js, React, Node.js, TypeScript, React Native, and Expo.",
+  description: pageDescription,
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Kaushal Rathod | Full Stack Developer Portfolio",
-    description:
-      "Explore projects, skills, and experience in frontend and backend engineering.",
+    type: "website",
+    title: pageTitle,
+    description: pageDescription,
     url: siteConfig.siteUrl,
-    images: [
-      {
-        url: "/Images/profile.png",
-        width: 1200,
-        height: 630,
-        alt: "Kaushal Rathod portfolio home page",
-      },
-    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: pageTitle,
+    description: pageDescription,
   },
 };
 
@@ -39,9 +40,10 @@ export default function Home() {
       {
         "@type": "ProfilePage",
         "@id": `${absoluteUrl("/")}#profile`,
-        name: "Kaushal Rathod — Full Stack & Mobile App Developer",
-        description: siteConfig.description,
+        name: "Kaushal Rathod: Software Developer",
+        description: pageDescription,
         url: absoluteUrl("/"),
+        dateModified: "2026-11-05",
         isPartOf: { "@id": websiteId },
         mainEntity: { "@id": personId },
       },
@@ -63,6 +65,7 @@ export default function Home() {
       <HomeHero />
       <HomeFeaturedProjects />
       <HomeExpertise />
+      <HomeLatestPosts />
       <HomeCTA />
     </main>
   );

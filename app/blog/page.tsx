@@ -2,62 +2,70 @@ import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
-import { getBlogPosts, baseKeywords, geoKeywords } from "@/lib/blog"
-import { absoluteUrl } from "@/lib/site"
+import JsonLd from "@/components/JsonLd"
+import { getBlogPosts, baseKeywords } from "@/lib/blog"
+import { siteOgImage } from "@/lib/og"
+import { absoluteUrl, siteConfig } from "@/lib/site"
+import { breadcrumbSchema, personId } from "@/lib/seo"
 
 const posts = getBlogPosts()
 
-const pageTitle = "Developer Blog | Next.js, Full-Stack, and Community Insights"
+const pageTitle = "Kaushal Rathod Blog: Next.js & React Native Guides"
 const pageDescription =
-  "Modern developer blog with practical Next.js, full-stack, and system design insights for India developers, Gujarat developers, and the Ahmedabad developer community."
+  "The Kaushal Rathod blog: practical guides on Next.js, React Native, Expo, full-stack architecture, performance and SEO. Read the latest articles."
 
 export const metadata: Metadata = {
-  title: pageTitle,
+  title: { absolute: pageTitle },
   description: pageDescription,
   alternates: {
     canonical: "/blog",
   },
-  keywords: [...baseKeywords, ...geoKeywords, "developer blog India", "Next.js insights"],
+  keywords: [...baseKeywords, "Next.js blog", "React Native tutorials"],
   openGraph: {
     type: "website",
     title: pageTitle,
     description: pageDescription,
     url: absoluteUrl("/blog"),
-    siteName: "Kaushal Rathod Blog",
-    images: [
-      {
-        url: "/Images/image1.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Developer blog hero",
-      },
-    ],
+    images: [siteOgImage],
   },
   twitter: {
     card: "summary_large_image",
     title: pageTitle,
     description: pageDescription,
-    images: ["/Images/image1.jpg"],
+    images: [siteOgImage.url],
   },
 }
 
+const topics = Array.from(new Set(posts.map((post) => post.category)))
+
 const blogSchema = {
   "@context": "https://schema.org",
-  "@type": "CollectionPage",
-  name: pageTitle,
-  description: pageDescription,
-  url: absoluteUrl("/blog"),
-  hasPart: posts.map((post) => ({
-    "@type": "BlogPosting",
-    headline: post.title,
-    description: post.description,
-    datePublished: post.date,
-    author: {
-      "@type": "Person",
-      name: post.author.name,
+  "@graph": [
+    {
+      "@type": "Blog",
+      "@id": `${absoluteUrl("/blog")}#blog`,
+      name: `${siteConfig.author.name}'s developer blog`,
+      description: pageDescription,
+      url: absoluteUrl("/blog"),
+      author: { "@id": personId },
+      publisher: { "@id": personId },
+      inLanguage: "en-US",
+      blogPost: posts.map((post) => ({
+        "@type": "BlogPosting",
+        "@id": `${absoluteUrl(`/blog/${post.slug}`)}#article`,
+        headline: post.title,
+        description: post.description,
+        datePublished: post.date,
+        dateModified: post.updated ?? post.date,
+        author: { "@id": personId },
+        url: absoluteUrl(`/blog/${post.slug}`),
+      })),
     },
-    url: absoluteUrl(`/blog/${post.slug}`),
-  })),
+    breadcrumbSchema([
+      { name: "Home", path: "/" },
+      { name: "Blog", path: "/blog" },
+    ]),
+  ],
 }
 
 export default function BlogPage() {
@@ -68,12 +76,12 @@ export default function BlogPage() {
           <div className="blog-hero-text">
             <span className="section-label">Developer Blog</span>
             <h1 className="blog-title display-font">
-              Modern engineering stories for India developers and global teams.
+              Kaushal Rathod&apos;s blog: Next.js &amp; React Native guides
             </h1>
             <p className="blog-subtitle">
-              Practical Next.js, full-stack, and architecture notes for the
-              Ahmedabad developer community, Gujarat developers, and distributed
-              product teams.
+              Kaushal Rathod writes practical Next.js, React Native and
+              full-stack architecture guides from real production work, with
+              code you can reuse.
             </p>
             <div className="blog-hero-actions">
               <Link href="/contact" className="soft-btn soft-btn-accent">
@@ -84,9 +92,9 @@ export default function BlogPage() {
               </Link>
             </div>
             <div className="blog-keywords">
-              {geoKeywords.map((keyword) => (
-                <span key={keyword} className="blog-tag">
-                  {keyword}
+              {topics.map((topic) => (
+                <span key={topic} className="blog-tag">
+                  {topic}
                 </span>
               ))}
             </div>
@@ -94,22 +102,22 @@ export default function BlogPage() {
           <div className="blog-hero-media">
             <div className="blog-hero-image">
               <Image
-                src="/Images/Office.jpg"
-                alt="Developer workspace"
+                src="/Images/office-desk-setup.webp"
+                alt="Laptop and notes on a developer's desk"
                 fill
                 priority
                 sizes="(max-width: 900px) 100vw, 480px"
               />
             </div>
             <div className="blog-hero-card soft-card soft-shadow">
-              <div className="blog-hero-card-title">Community Signals</div>
+              <div className="blog-hero-card-title">Stay updated</div>
               <p>
-                Curated guidance for JavaScript developers India, Next.js
-                developers India, and full-stack developers India.
+                New articles on Next.js, Expo and full-stack delivery. Follow
+                along with the RSS feed.
               </p>
-              <Link href="/contact" className="blog-hero-link">
-                Join the newsletter <ArrowRight className="h-4 w-4" />
-              </Link>
+              <a href="/feed.xml" className="blog-hero-link">
+                Subscribe via RSS <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </a>
             </div>
           </div>
         </div>
@@ -164,24 +172,21 @@ export default function BlogPage() {
       <section className="blog-cta">
         <div className="blog-cta-inner">
           <div>
-            <h3 className="blog-cta-title display-font">
-              Need a blog that ranks and converts?
-            </h3>
+            <h2 className="blog-cta-title display-font">
+              Need a fast, search-ready website?
+            </h2>
             <p className="blog-cta-text">
-              I help developer teams craft SEO-ready articles with strong GEO
-              signals for India developers and fast, accessible delivery.
+              I build Next.js sites and apps with clean metadata, structured
+              data and strong Core Web Vitals.
             </p>
           </div>
           <Link href="/contact" className="soft-btn soft-btn-dark soft-btn-fluid sm:w-auto">
-            Start a blog sprint
+            Start a project
           </Link>
         </div>
       </section>
 
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogSchema) }}
-      />
+      <JsonLd data={blogSchema} />
     </main>
   )
 }

@@ -24,6 +24,7 @@ const Header = () => {
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "About", href: "/about" },
+    { name: "Services", href: "/services" },
     { name: "Skills", href: "/skills" },
     { name: "Projects", href: "/projects" },
     { name: "Blog", href: "/blog" },
@@ -40,19 +41,26 @@ const Header = () => {
         className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6"
         aria-label="Primary navigation"
       >
-        <Link href="/" className="flex min-w-0 items-center gap-2 sm:gap-3">
-          <div className="soft-card soft-shadow-sm flex h-10 w-10 shrink-0 items-center justify-center text-sm font-bold sm:h-11 sm:w-11">
+        <Link
+          href="/"
+          className="flex min-w-0 items-center gap-2 sm:gap-3"
+          aria-label="Kaushal Rathod, home"
+        >
+          <div
+            className="soft-card soft-shadow-sm flex h-10 w-10 shrink-0 items-center justify-center text-sm font-bold sm:h-11 sm:w-11"
+            aria-hidden="true"
+          >
             KR
           </div>
           <div className="min-w-0 leading-tight">
             <div className="truncate text-base font-semibold sm:text-lg">Kaushal Rathod</div>
             <div className="truncate text-[10px] font-semibold uppercase text-black/60 sm:text-xs">
-              Full Stack Developer
+              Software Developer
             </div>
           </div>
         </Link>
 
-        <div className="hidden items-center gap-6 text-sm font-semibold uppercase md:flex">
+        <div className="hidden items-center gap-1 text-sm font-semibold uppercase md:flex lg:gap-2">
           {navLinks.map((link) => (
             <Link
               key={link.name}
@@ -70,7 +78,7 @@ const Header = () => {
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <div className="hidden sm:block">
+          <div className="hidden sm:block md:hidden xl:block">
             <Link href="/contact" className="soft-btn md:inline-flex">
             Contact
           </Link>

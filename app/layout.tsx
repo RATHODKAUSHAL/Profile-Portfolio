@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next"
-import { Fira_Code, Open_Sans } from "next/font/google"
+import { Space_Grotesk, Syne } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import ClientLayout from "@/components/ClientLayout"
@@ -9,18 +9,16 @@ import { absoluteUrl, siteConfig } from "@/lib/site"
 import { personId, websiteId } from "@/lib/seo"
 
 // Fonts
-const firaCode = Fira_Code({
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  variable: "--font-fira-code",
+  variable: "--font-body",
   display: "swap",
-  weight: ["400", "500", "600", "700"],
 })
 
-const openSans = Open_Sans({
+const syne = Syne({
   subsets: ["latin"],
-  variable: "--font-open-sans",
+  variable: "--font-display",
   display: "swap",
-  weight: ["400", "500", "600", "700"],
 })
 
 // ✅ CORRECT place for viewport + themeColor
@@ -32,6 +30,8 @@ export const viewport: Viewport = {
 }
 
 // ✅ metadata WITHOUT viewport / themeColor
+// Canonicals are set per page so new routes never inherit the home URL.
+// OG/Twitter images come from app/opengraph-image.tsx; icons from app/icon.tsx.
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.siteUrl),
   applicationName: siteConfig.name,
@@ -40,20 +40,15 @@ export const metadata: Metadata = {
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
-  keywords: siteConfig.keywords,
+  keywords: [...siteConfig.keywords],
   authors: [{ name: siteConfig.author.name, url: "/about" }],
   creator: siteConfig.author.name,
   publisher: siteConfig.author.name,
   category: "technology",
   alternates: {
-    canonical: "/",
     types: {
       "application/rss+xml": [{ url: "/feed.xml", title: "Kaushal Rathod's developer blog" }],
     },
-  },
-  icons: {
-    icon: "/Images/user.png",
-    apple: "/Images/user.png",
   },
   openGraph: {
     type: "website",
@@ -62,20 +57,11 @@ export const metadata: Metadata = {
     title: siteConfig.title,
     description: siteConfig.description,
     siteName: siteConfig.name,
-    images: [
-      {
-        url: "/Images/profileimage.jpeg",
-        width: 1600,
-        height: 1200,
-        alt: "Kaushal Rathod portfolio preview",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: siteConfig.title,
     description: siteConfig.description,
-    images: ["/Images/profileimage.jpeg"],
   },
   robots: {
     index: true,
@@ -104,33 +90,77 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const { author } = siteConfig
+
   const personSchema = {
     "@context": "https://schema.org",
     "@type": "Person",
     "@id": personId,
-    name: siteConfig.author.name,
-    jobTitle: siteConfig.author.role,
+    name: author.name,
+    alternateName: author.alternateName,
+    givenName: author.givenName,
+    familyName: author.familyName,
+    jobTitle: author.role,
+    description: author.longBio,
     url: siteConfig.siteUrl,
-    image: absoluteUrl(siteConfig.author.image),
-    email: siteConfig.author.email,
-    sameAs: siteConfig.author.sameAs,
+    mainEntityOfPage: absoluteUrl("/about"),
+    image: {
+      "@type": "ImageObject",
+      url: absoluteUrl(author.image),
+      width: 1600,
+      height: 1200,
+    },
+    email: `mailto:${author.email}`,
+    sameAs: author.sameAs,
+    nationality: { "@type": "Country", name: author.location.country },
     address: {
       "@type": "PostalAddress",
-      addressLocality: siteConfig.author.location.city,
-      addressRegion: siteConfig.author.location.region,
-      addressCountry: siteConfig.author.location.countryCode,
+      addressLocality: author.location.city,
+      addressRegion: author.location.region,
+      addressCountry: author.location.countryCode,
+    },
+    worksFor: {
+      "@type": "Organization",
+      name: author.employer.name,
+      url: author.employer.url,
+    },
+    hasOccupation: {
+      "@type": "Occupation",
+      name: author.role,
+      occupationLocation: { "@type": "City", name: author.location.city },
+      skills:
+        "Next.js, React, TypeScript, Node.js, React Native, Expo, Laravel, PostgreSQL, MySQL",
     },
     knowsAbout: [
+      "Full-stack web development",
+      "Mobile app development",
       "Next.js",
       "React",
       "TypeScript",
       "Node.js",
+      "Express",
+      "Laravel",
+      "PHP",
       "React Native",
       "Expo",
       "Android application development",
       "PostgreSQL",
+      "MySQL",
+      "Prisma",
+      "Supabase",
+      "REST APIs",
+      "Logistics software",
       "Technical SEO",
+      "Web performance",
     ],
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "project enquiries",
+      email: author.email,
+      url: absoluteUrl("/contact"),
+      availableLanguage: ["English"],
+      areaServed: "Worldwide",
+    },
   }
 
   const websiteSchema = {
@@ -141,19 +171,20 @@ export default function RootLayout({
     alternateName: "Kaushal Rathod Portfolio",
     url: siteConfig.siteUrl,
     description: siteConfig.description,
-    author: {
-      "@type": "Person",
-      "@id": personId,
-      name: siteConfig.author.name,
-    },
+    author: { "@id": personId },
     publisher: { "@id": personId },
     inLanguage: "en-US",
   }
 
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {author.sameAs.map((href) => (
+          <link key={href} rel="me" href={href} />
+        ))}
+      </head>
       <body
-        className={`${firaCode.variable} ${openSans.variable} antialiased`}
+        className={`${spaceGrotesk.variable} ${syne.variable} antialiased`}
       >
         <Script
         src="https://www.googletagmanager.com/gtag/js?id=G-779KQ6LCER"

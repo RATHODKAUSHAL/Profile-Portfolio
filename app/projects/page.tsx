@@ -1,91 +1,116 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import JsonLd from "@/components/JsonLd";
-import { absoluteUrl, siteConfig } from "@/lib/site";
+import { siteOgImage } from "@/lib/og";
+import { absoluteUrl } from "@/lib/site";
 import { breadcrumbSchema, personId } from "@/lib/seo";
+import fleetConnektBanner from "../../Assets/fleetconnekt/fleetconnekt-logistics-app-banner.webp";
+
+const pageTitle = "Kaushal Rathod Projects: Web & Mobile App Case Studies";
+const pageDescription =
+  "Kaushal Rathod's projects: FleetConnekt, 48jobs.com, Trukky LMS and Zestify. See the stack and outcome of each web and mobile app, then discuss yours.";
 
 export const metadata: Metadata = {
-  title: "Full-Stack & Mobile App Projects",
-  description:
-    "Production projects by Kaushal Rathod across logistics, dashboards, and e-commerce platforms using Next.js, React, and Node.js.",
+  title: { absolute: pageTitle },
+  description: pageDescription,
   alternates: {
     canonical: "/projects",
   },
   openGraph: {
-    title: "Projects | Kaushal Rathod",
-    description:
-      "Case-study style project portfolio with technology stack, business context, and outcomes.",
+    type: "website",
+    title: pageTitle,
+    description: pageDescription,
     url: absoluteUrl("/projects"),
-    images: [
-      {
-        url: "/Images/48jobs.png",
-        width: 1902,
-        height: 941,
-        alt: "Project showcase by Kaushal Rathod",
-      },
-    ],
+    images: [siteOgImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: pageTitle,
+    description: pageDescription,
+    images: [siteOgImage.url],
   },
 };
 
-const projects = [
+type Project = {
+  title: string;
+  image: string | StaticImageData;
+  imageAlt: string;
+  description: string;
+  technologies: string[];
+  outcome: string;
+  platform: "web" | "mobile";
+  caseStudy?: string;
+  liveUrl?: string;
+};
+
+const projects: Project[] = [
   {
     title: "48jobs.com Logistics Job Portal",
-    image: "/Images/48jobs.png",
+    image: "/Images/48jobs-logistics-job-portal.webp",
+    imageAlt: "48jobs.com home page listing logistics jobs",
     description:
       "A logistics hiring platform with candidate onboarding, role-based access, and verification workflows.",
     technologies: ["Next.js", "Node.js", "PostgreSQL", "REST APIs"],
     outcome:
       "Improved hiring flow automation with better candidate discovery and admin control.",
-    href: "/contact",
+    platform: "web",
+    liveUrl: "https://48jobs.com",
   },
   {
     title: "Trukky Learning Management System",
-    image: "/Images/Trukky-LMS.png",
+    image: "/Images/trukky-lms-dashboard.webp",
+    imageAlt: "Trukky LMS dashboard with course progress and analytics",
     description:
       "An internal LMS for logistics teams with progress tracking, content management, and analytics.",
     technologies: ["Laravel", "React", "TypeScript", "MySQL"],
     outcome:
       "Enabled structured training delivery and reduced onboarding friction for teams.",
-    href: "/contact",
+    platform: "web",
   },
   {
     title: "Zestify E-commerce Experience",
-    image: "/Images/image2.jpg",
+    image: "/Images/laptop-working-from-cafe.webp",
+    imageAlt: "Laptop on a café table (placeholder until a Zestify screenshot is added)",
     description:
       "A storefront and admin suite with product catalog workflows, content controls, and checkout UX improvements.",
     technologies: ["Next.js", "Prisma", "PostgreSQL", "Tailwind CSS"],
     outcome:
       "Delivered faster storefront performance and maintainable admin tooling.",
-    href: "/contact",
+    platform: "web",
   },
   {
     title: "FleetConnekt Logistics Platform",
-    image: "/Images/48jobs.png",
+    image: fleetConnektBanner,
+    imageAlt: "FleetConnekt mobile app screens for transporters",
     description:
       "A mobile-first Indian highway logistics platform with a verified transporter directory and digital lorry receipt workflows.",
     technologies: ["Mobile App", "Logistics", "Digital Lorry Receipts"],
     outcome:
       "Combined transporter discovery, route information, and freight documentation in one operational experience.",
-    href: "/fleetconnekt",
+    platform: "mobile",
+    caseStudy: "/projects/fleetconnekt",
   },
 ];
+
+const imageUrl = (image: string | StaticImageData) =>
+  absoluteUrl(typeof image === "string" ? image : image.src);
 
 const faqs = [
   {
     question: "What technologies does Kaushal Rathod use for full stack projects?",
     answer:
-      "Kaushal primarily works with Next.js, React, Node.js, TypeScript, Laravel, PostgreSQL, and MySQL depending on project requirements.",
+      "Kaushal primarily works with Next.js, React and TypeScript for web interfaces, Node.js and Laravel for APIs, PostgreSQL and MySQL for data, and React Native with Expo for mobile apps. The stack is chosen per project: 48jobs.com runs on Next.js, Node.js and PostgreSQL, while Trukky LMS uses Laravel, React and MySQL.",
   },
   {
     question: "What type of projects are included in this portfolio?",
     answer:
-      "This portfolio includes logistics platforms, dashboards, LMS products, and e-commerce applications with frontend and backend ownership.",
+      "The portfolio covers logistics and operations software: FleetConnekt, a highway logistics mobile app; 48jobs.com, a logistics hiring platform; Trukky LMS, an internal training system; and Zestify, an e-commerce storefront with an admin suite. In each project Kaushal worked across the frontend, backend and data layer.",
   },
   {
     question: "Can Kaushal help with SEO and GEO-ready website architecture?",
     answer:
-      "Yes. Projects are built with structured metadata, semantic HTML, performance optimization, and schema markup for SEO and AI discoverability.",
+      "Yes. Kaushal builds sites with semantic HTML, per-page metadata, JSON-LD structured data, XML sitemaps and llms.txt files, and keeps pages statically rendered and fast. That makes content easy for search engines to index and for AI assistants such as ChatGPT, Perplexity and Gemini to read and cite accurately.",
   },
 ];
 
@@ -97,17 +122,21 @@ export default function ProjectsPage() {
         "@type": "CollectionPage",
         "@id": `${absoluteUrl("/projects")}#page`,
         name: "Full-stack and mobile app projects by Kaushal Rathod",
-        description: metadata.description,
+        description: pageDescription,
         url: absoluteUrl("/projects"),
         about: { "@id": personId },
         hasPart: projects.map((project, index) => ({
-          "@type": "CreativeWork",
+          "@type": project.platform === "mobile" ? "SoftwareApplication" : "WebApplication",
           "@id": `${absoluteUrl("/projects")}#project-${index + 1}`,
           name: project.title,
           description: project.description,
+          applicationCategory: "BusinessApplication",
+          operatingSystem: project.platform === "mobile" ? "Android" : "Web",
           creator: { "@id": personId },
-          image: absoluteUrl(project.image),
-          url: absoluteUrl(project.href),
+          image: imageUrl(project.image),
+          url:
+            project.liveUrl ??
+            absoluteUrl(project.caseStudy ?? `/projects#project-${index + 1}`),
           keywords: project.technologies.join(", "),
         })),
       },
@@ -135,25 +164,26 @@ export default function ProjectsPage() {
           <header>
             <div className="section-label bg-[#ffeb3b]">Projects</div>
             <h1 className="display-font text-[clamp(2rem,8vw,4.25rem)] leading-[0.95]">
-              Full-stack and mobile projects with clear outcomes.
+              Kaushal Rathod&apos;s projects
             </h1>
             <p className="mt-4 max-w-3xl text-base text-black/75 sm:text-lg">
-              This project portfolio highlights production work I have delivered
-              across logistics, learning systems, and commerce products. Each
-              project includes clear context, technologies used, and impact.
+              These projects by Kaushal Rathod are production web and mobile
+              apps for logistics, team training and e-commerce. Each one lists
+              the problem, the technologies used and the outcome.
             </p>
           </header>
 
           <section aria-label="Project list" className="grid grid-cols-12 gap-6">
-            {projects.map((project) => (
+            {projects.map((project, index) => (
               <article
                 key={project.title}
+                id={`project-${index + 1}`}
                 className="soft-card soft-shadow col-span-12 flex flex-col gap-4 p-5 sm:p-6 md:col-span-6 lg:col-span-4"
               >
                 <div className="relative h-44 overflow-hidden rounded-[22px] border-[3px] border-black bg-[#ffeb3b]">
                   <Image
                     src={project.image}
-                    alt={`${project.title} screenshot`}
+                    alt={project.imageAlt}
                     className="object-cover"
                     fill
                     sizes="(max-width: 768px) 100vw, 33vw"
@@ -169,16 +199,33 @@ export default function ProjectsPage() {
                     </span>
                   ))}
                 </div>
-                <Link className="soft-btn soft-btn-dark soft-btn-fluid w-full sm:w-fit" href={project.href}>
-                  {project.href === "/fleetconnekt" ? "View Case Study" : "Discuss Similar Project"}
-                </Link>
+                <div className="mt-auto flex flex-wrap gap-3">
+                  {project.caseStudy ? (
+                    <Link className="soft-btn soft-btn-dark soft-btn-fluid sm:w-fit" href={project.caseStudy}>
+                      View case study
+                    </Link>
+                  ) : null}
+                  {project.liveUrl ? (
+                    <a
+                      className="soft-btn soft-btn-dark soft-btn-fluid sm:w-fit"
+                      href={project.liveUrl}
+                      rel="noopener"
+                      target="_blank"
+                    >
+                      Visit {new URL(project.liveUrl).host}
+                    </a>
+                  ) : null}
+                  <Link className="soft-btn soft-btn-fluid sm:w-fit" href="/contact">
+                    Discuss a similar project
+                  </Link>
+                </div>
               </article>
             ))}
           </section>
 
           <section className="soft-section bg-white p-5 sm:p-6" aria-labelledby="projects-faq">
             <h2 id="projects-faq" className="display-font text-2xl sm:text-3xl">
-              FAQ
+              Frequently asked questions
             </h2>
             <div className="mt-4 grid gap-4">
               {faqs.map((faq) => (

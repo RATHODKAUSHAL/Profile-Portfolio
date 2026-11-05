@@ -1,16 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 
 const ClientLayout = ({ children }: { children: React.ReactNode }) => {
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    setIsLoading(false);
-  }, []);
-
   useEffect(() => {
     if (typeof navigator === "undefined" || !("serviceWorker" in navigator)) {
       return;
@@ -30,7 +24,7 @@ const ClientLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <>
-      <div className={`transition-opacity duration-500 ${isLoading ? "opacity-0" : "opacity-100"}`}>
+      <div>
         <Header />
         <div className="min-h-screen">
           {children}

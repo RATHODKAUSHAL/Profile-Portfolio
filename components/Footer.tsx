@@ -14,10 +14,12 @@ const Footer = () => {
   const quickLinks = [
     { name: "Home", href: "/" },
     { name: "About", href: "/about" },
+    { name: "Services", href: "/services" },
     { name: "Skills", href: "/skills" },
     { name: "Projects", href: "/projects" },
     { name: "Blog", href: "/blog" },
     { name: "Experience", href: "/experience" },
+    { name: "Resume", href: "/resume" },
     { name: "Contact", href: "/contact" },
   ];
 
@@ -57,19 +59,20 @@ const Footer = () => {
             <Link href="/" className="inline-block">
               <div className="text-xl font-semibold sm:text-2xl">Kaushal Rathod</div>
               <div className="text-sm font-semibold uppercase text-black/60">
-                Full Stack Developer
+                Software Developer
               </div>
             </Link>
             <p className="text-sm text-black/70">
-              Building friendly, bold web experiences with soft Neo-Brutalist
-              styling and modern engineering practices.
+              Kaushal Rathod is a software developer based in Ahmedabad, India,
+              who builds full-stack web applications and React Native mobile
+              apps with Next.js, React and Node.js.
             </p>
           </div>
 
           <div>
-            <h4 className="text-sm font-semibold uppercase text-black/60">
+            <h2 className="text-sm font-semibold uppercase text-black/60">
               Pages
-            </h4>
+            </h2>
             <div className="mt-4 flex flex-col gap-2 text-sm font-semibold">
               {quickLinks.map((link) => (
                 <Link key={link.name} href={link.href} className="hover:underline">
@@ -80,27 +83,28 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="text-sm font-semibold uppercase text-black/60">
+            <h2 className="text-sm font-semibold uppercase text-black/60">
               Contact
-            </h4>
+            </h2>
             <div className="mt-4 flex flex-col gap-2 text-sm text-black/70">
               <span>rathodkaushal2001@gmail.com</span>
-              <span>Remote / Worldwide</span>
+              <span>Ahmedabad, India · Remote worldwide</span>
               <span>Available for collaborations</span>
             </div>
           </div>
 
           <div>
-            <h4 className="text-sm font-semibold uppercase text-black/60">
+            <h2 className="text-sm font-semibold uppercase text-black/60">
               Follow
-            </h4>
+            </h2>
             <div className="mt-4 flex flex-wrap gap-3">
               {socialLinks.map((social) => (
                 <a
                   key={social.label}
                   href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  {...(social.href.startsWith("http")
+                    ? { target: "_blank", rel: "me noopener noreferrer" }
+                    : {})}
                   aria-label={social.label}
                   className="soft-card soft-shadow-sm flex h-11 w-11 items-center justify-center"
                 >

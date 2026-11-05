@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
+import JsonLd from "@/components/JsonLd";
+import { siteOgImage } from "@/lib/og";
 import { absoluteUrl, siteConfig } from "@/lib/site";
+import { breadcrumbSchema, personId } from "@/lib/seo";
 
-const pageTitle = "Technical Skills | Web & Mobile Application Development";
+const pageTitle = "Next.js & React Native Developer Skills";
 const pageDescription =
-  "Explore Kaushal Rathod's frontend, mobile, backend, database, and developer tooling experience with React, Next.js, Expo, React Native, Node.js, and PostgreSQL.";
+  "Kaushal Rathod's skills as a Next.js and React Native developer: React, TypeScript, Expo, Node.js, Laravel, PostgreSQL and more. See how each one is used.";
 
 export const metadata: Metadata = {
   title: pageTitle,
@@ -19,23 +23,16 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     type: "profile",
-    title: pageTitle,
+    title: `${pageTitle} | ${siteConfig.name}`,
     description: pageDescription,
     url: absoluteUrl("/skills"),
-    images: [
-      {
-        url: "/Images/profileimage.jpeg",
-        width: 1200,
-        height: 630,
-        alt: "Kaushal Rathod web and mobile development skills",
-      },
-    ],
+    images: [siteOgImage],
   },
   twitter: {
     card: "summary_large_image",
-    title: pageTitle,
+    title: `${pageTitle} | ${siteConfig.name}`,
     description: pageDescription,
-    images: ["/Images/profileimage.jpeg"],
+    images: [siteOgImage.url],
   },
 };
 
@@ -52,6 +49,7 @@ const skillGroups = [
       },
       {
         name: "Next.js",
+        link: { href: "/services#web-applications", label: "Next.js development services" },
         icon: "/skills/nextjs.png",
         description:
           "I build full-stack, production-ready experiences with Next.js, from routed pages to server-rendered data. It taught me how rendering choices, caching, and structure shape performance.",
@@ -88,12 +86,14 @@ const skillGroups = [
     items: [
       {
         name: "Expo",
+        link: { href: "/blog/today-i-learned-expo-react-native-push-notifications", label: "Read: Expo push notifications guide" },
         icon: "/skills/expo.svg",
         description:
           "I use Expo to develop, test, and ship React Native applications with a productive cross-platform workflow. It taught me how config plugins, EAS builds, and native capabilities fit together.",
       },
       {
         name: "React Native",
+        link: { href: "/projects/fleetconnekt", label: "FleetConnekt: a React Native app case study" },
         icon: "/skills/react-native.svg",
         description:
           "I build mobile interfaces with React Native while sharing familiar React patterns across Android and iOS. It taught me mobile-first interaction, native constraints, and platform-aware UI design.",
@@ -130,6 +130,7 @@ const skillGroups = [
       },
       {
         name: "Laravel",
+        link: { href: "/projects", label: "See Trukky LMS" },
         icon: "/skills/Laravel.png",
         description:
           "I use Laravel to deliver structured backend applications with authentication, validation, and database workflows. It deepened my understanding of MVC and convention-led development.",
@@ -148,6 +149,7 @@ const skillGroups = [
     items: [
       {
         name: "PostgreSQL",
+        link: { href: "/projects", label: "See 48jobs.com" },
         icon: "/skills/PostgreSQL.png",
         description:
           "I use PostgreSQL for relational data that needs consistency and expressive querying. It taught me deliberate schema design, indexing, joins, and the value of data integrity.",
@@ -224,39 +226,41 @@ export default function SkillsPage() {
 
   const profileSchema = {
     "@context": "https://schema.org",
-    "@type": "ProfilePage",
-    url: absoluteUrl("/skills"),
-    mainEntity: {
-      "@type": "Person",
-      "@id": `${siteConfig.siteUrl}/#person`,
-      name: siteConfig.author.name,
-      jobTitle: siteConfig.author.role,
-      knowsAbout: skills.map((skill) => skill.name),
-    },
+    "@graph": [
+      {
+        "@type": "ProfilePage",
+        "@id": `${absoluteUrl("/skills")}#page`,
+        url: absoluteUrl("/skills"),
+        name: pageTitle,
+        mainEntity: { "@id": personId },
+      },
+      breadcrumbSchema([
+        { name: "Home", path: "/" },
+        { name: "Skills", path: "/skills" },
+      ]),
+    ],
   };
 
   return (
     <main className="soft-grid-bg">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(skillsSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(profileSchema) }}
-      />
+      <JsonLd data={[skillsSchema, profileSchema]} />
       <section className="pt-24 lg:pt-32">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-14 px-4 pb-20 sm:px-6 lg:gap-20 lg:pb-28">
           <div className="grid grid-cols-12 gap-8">
             <div className="col-span-12 lg:col-span-7">
               <div className="section-label bg-[#ffeb3b]">Skills</div>
               <h1 className="display-font text-[clamp(2rem,8vw,4.25rem)] leading-[0.95]">
-                Tools, patterns, and systems I ship with.
+                Next.js &amp; React Native developer: Kaushal Rathod&apos;s skills
               </h1>
               <p className="mt-4 max-w-2xl text-base text-black/75 sm:text-lg">
-                A focused stack built for product velocity and durable UX. Each
-                category is curated for clarity, reliability, and speed in
-                production.
+                As a Next.js and React Native developer, Kaushal Rathod uses this
+                stack to build full-stack web apps, mobile apps and APIs. Each
+                card explains how the tool is used in production. Need it for
+                your project? See the{" "}
+                <Link className="font-bold underline underline-offset-4" href="/services">
+                  development services
+                </Link>
+                .
               </p>
             </div>
             <div className="col-span-12 lg:col-span-5">
@@ -329,6 +333,14 @@ export default function SkillsPage() {
                       <p className="text-sm leading-6 text-black/75 sm:text-base sm:leading-7">
                         {skill.description}
                       </p>
+                      {skill.link ? (
+                        <Link
+                          className="relative z-10 mt-3 inline-block text-sm font-bold underline underline-offset-4"
+                          href={skill.link.href}
+                        >
+                          {skill.link.label}
+                        </Link>
+                      ) : null}
                       <span
                         aria-hidden="true"
                         className={`absolute inset-x-0 bottom-0 h-2 origin-left scale-x-0 border-t-2 border-black transition-transform duration-300 ease-out group-hover/card:scale-x-100 motion-reduce:transition-none ${skill.accent}`}

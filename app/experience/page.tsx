@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
 import { BriefcaseBusiness, CalendarDays, CodeXml, Rocket } from "lucide-react";
+import Link from "next/link";
+import JsonLd from "@/components/JsonLd";
+import { siteOgImage } from "@/lib/og";
 import { absoluteUrl, siteConfig } from "@/lib/site";
+import { experiences, formatDuration } from "@/lib/experience";
+import { breadcrumbSchema, personId } from "@/lib/seo";
 
-const pageTitle = "Professional Experience | Full Stack & Frontend Developer";
+const pageTitle = "Experience: Full Stack Developer at Trukky";
 const pageDescription =
-  "Explore Kaushal Rathod's professional experience building logistics products, React interfaces, Next.js applications, APIs, and data-driven systems.";
+  "Kaushal Rathod's experience: Full Stack Developer at Trukky since 2025 and Frontend Developer at Maze Technolabs. See each role, its results and the tech used.";
 
 export const metadata: Metadata = {
   title: pageTitle,
@@ -19,73 +24,23 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     type: "profile",
-    title: pageTitle,
+    title: `${pageTitle} | ${siteConfig.name}`,
     description: pageDescription,
     url: absoluteUrl("/experience"),
-    images: [
-      {
-        url: "/Images/profileimage.jpeg",
-        width: 1200,
-        height: 630,
-        alt: "Kaushal Rathod professional experience",
-      },
-    ],
+    images: [siteOgImage],
   },
   twitter: {
     card: "summary_large_image",
-    title: pageTitle,
+    title: `${pageTitle} | ${siteConfig.name}`,
     description: pageDescription,
-    images: ["/Images/profileimage.jpeg"],
+    images: [siteOgImage.url],
   },
 };
 
-const experiences = [
-  {
-    role: "Full Stack Developer",
-    company: "Trukky",
-    period: "February 2025 – Present",
-    duration: "1 yr 5 mos",
-    accent: "bg-[#ffeb3b]",
-    summary:
-      "I build and maintain logistics products across the frontend, backend, and data layer, turning operational requirements into reliable workflows used by internal teams and customers.",
-    achievements: [
-      "Delivered responsive product experiences with Next.js, React, and TypeScript.",
-      "Connected complex UI workflows to Node.js APIs and PostgreSQL data.",
-      "Improved maintainability through reusable components, clearer contracts, and focused reviews.",
-    ],
-    technologies: ["Next.js", "React", "TypeScript", "Node.js", "PostgreSQL"],
-  },
-  {
-    role: "Frontend Developer",
-    company: "Maze Technolabs",
-    period: "March 2024 – January 2025",
-    duration: "11 mos",
-    accent: "bg-[#2f5dff] text-white",
-    summary:
-      "I shipped customer-facing React features in collaboration with design and backend teams, with particular attention to responsive behavior, reusable UI, and production quality.",
-    achievements: [
-      "Converted product requirements and designs into accessible React interfaces.",
-      "Integrated REST APIs and handled loading, error, and empty states across user flows.",
-      "Reduced mobile UI friction by improving layouts, component reuse, and performance.",
-    ],
-    technologies: ["React", "JavaScript", "Node.js", "REST APIs", "PostgreSQL"],
-  },
-  {
-    role: "Junior Developer Intern",
-    company: "Maze Technolabs",
-    period: "June 2023 – March 2024",
-    duration: "10 mos",
-    accent: "bg-[#ff7f6b]",
-    summary:
-      "I developed my production foundations by supporting interface builds, fixing defects, testing responsive behavior, and documenting patterns the team could reuse.",
-    achievements: [
-      "Built and refined web screens with JavaScript, React, and component libraries.",
-      "Worked through QA feedback and learned to debug issues systematically.",
-      "Documented reusable UI patterns and strengthened Git-based collaboration habits.",
-    ],
-    technologies: ["JavaScript", "React", "shadcn/ui", "MySQL", "Git"],
-  },
-];
+
+
+// Rebuild daily so the "Present" role duration stays current.
+export const revalidate = 86400;
 
 const stats = [
   { value: "3+", label: "Years building", icon: CalendarDays },
@@ -96,55 +51,40 @@ const stats = [
 export default function ExperiencePage() {
   const experienceSchema = {
     "@context": "https://schema.org",
-    "@type": "ProfilePage",
-    name: pageTitle,
-    description: pageDescription,
-    url: absoluteUrl("/experience"),
-    mainEntity: {
-      "@type": "Person",
-      "@id": `${siteConfig.siteUrl}/#person`,
-      name: siteConfig.author.name,
-      jobTitle: "Full Stack Developer",
-      worksFor: {
-        "@type": "Organization",
-        name: "Trukky",
-      },
-      knowsAbout: Array.from(
-        new Set(experiences.flatMap((experience) => experience.technologies)),
-      ),
-      sameAs: siteConfig.author.sameAs,
-    },
-  };
-
-  const breadcrumbSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
+    "@graph": [
       {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: absoluteUrl("/"),
+        "@type": "ProfilePage",
+        "@id": `${absoluteUrl("/experience")}#page`,
+        name: pageTitle,
+        description: pageDescription,
+        url: absoluteUrl("/experience"),
+        mainEntity: { "@id": personId },
       },
       {
-        "@type": "ListItem",
-        position: 2,
-        name: "Experience",
-        item: absoluteUrl("/experience"),
+        "@type": "ItemList",
+        name: `${siteConfig.author.name} work history`,
+        itemListElement: experiences.map((experience, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          item: {
+            "@type": "OrganizationRole",
+            roleName: experience.role,
+            startDate: experience.start,
+            ...(experience.end ? { endDate: experience.end } : {}),
+            memberOf: { "@type": "Organization", name: experience.company },
+          },
+        })),
       },
+      breadcrumbSchema([
+        { name: "Home", path: "/" },
+        { name: "Experience", path: "/experience" },
+      ]),
     ],
   };
 
   return (
     <main className="soft-grid-bg">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(experienceSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
+      <JsonLd data={experienceSchema} />
 
       <section className="pt-24 lg:pt-32">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-14 px-4 pb-20 sm:px-6 lg:gap-20 lg:pb-28">
@@ -152,12 +92,24 @@ export default function ExperiencePage() {
             <div className="col-span-12 lg:col-span-8">
               <div className="section-label bg-[#ffeb3b]">Experience</div>
               <h1 className="display-font text-[clamp(2rem,8vw,4.25rem)] leading-[0.95]">
-                Building products, solving problems, and growing with every role.
+                Kaushal Rathod&apos;s work experience
               </h1>
               <p className="mt-5 max-w-3xl text-base leading-7 text-black/75 sm:text-lg">
-                Since 2023, I have worked across frontend and full-stack roles,
+                Since 2023, Kaushal Rathod has worked across frontend and full-stack roles,
                 building responsive interfaces, dependable APIs, and practical
-                systems for product and logistics teams.
+                systems for product and logistics teams. See the{" "}
+                <Link className="font-bold underline underline-offset-4" href="/projects">
+                  projects from these roles
+                </Link>{" "}
+                or{" "}
+                <Link className="font-bold underline underline-offset-4" href="/skills">
+                  the tools he uses
+                </Link>
+                , or view the{" "}
+                <Link className="font-bold underline underline-offset-4" href="/resume">
+                  one-page resume
+                </Link>
+                .
               </p>
             </div>
             <div className="col-span-12 grid grid-cols-3 gap-3 lg:col-span-4 lg:grid-cols-1">
@@ -171,7 +123,7 @@ export default function ExperiencePage() {
                     <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
                     <div>
                       <strong className="block text-lg leading-none">{stat.value}</strong>
-                      <span className="text-[10px] font-semibold uppercase text-black/60 sm:text-xs">
+                      <span className="text-xs font-semibold uppercase text-black/60">
                         {stat.label}
                       </span>
                     </div>
@@ -218,7 +170,8 @@ export default function ExperiencePage() {
                         </span>
                       </div>
                       <h3 className="display-font text-xl transition-transform duration-300 group-hover/card:translate-x-1 motion-reduce:transform-none motion-reduce:transition-none sm:text-2xl">
-                        {experience.role}
+                        {experience.role}{" "}
+                        <span className="text-black/60">at {experience.company}</span>
                       </h3>
                       <p className="mt-3 text-sm leading-6 text-black/75 sm:text-base">
                         {experience.summary}
@@ -246,11 +199,11 @@ export default function ExperiencePage() {
 
                     <div className="relative z-10 col-start-1 row-start-1 flex justify-center lg:col-start-2">
                       <div className={`flex h-20 w-20 flex-col items-center justify-center rounded-full border-[3px] border-black px-2 text-center shadow-[4px_4px_0_0_rgba(0,0,0,0.18)] transition-transform duration-300 hover:scale-105 motion-reduce:transform-none motion-reduce:transition-none lg:h-28 lg:w-28 ${experience.accent}`}>
-                        <strong className="text-[11px] leading-tight lg:text-sm">
+                        <strong className="text-xs leading-tight lg:text-sm">
                           {experience.company}
                         </strong>
-                        <span className="mt-1 text-[8px] font-bold uppercase leading-tight opacity-75 lg:text-[10px]">
-                          {experience.duration}
+                        <span className="mt-1 text-[0.625rem] font-bold uppercase leading-tight opacity-80 lg:text-xs">
+                          {formatDuration(experience.start, experience.end)}
                         </span>
                       </div>
                     </div>

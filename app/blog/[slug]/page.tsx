@@ -3,14 +3,17 @@ import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { ArrowRight, Calendar, Clock } from "lucide-react"
+import JsonLd from "@/components/JsonLd"
 import {
   getBlogPost,
   getBlogPosts,
+  getWordCount,
   baseKeywords,
-  geoKeywords,
   type BlogContentBlock,
+  type BlogPost,
 } from "@/lib/blog"
 import { absoluteUrl, siteConfig } from "@/lib/site"
+import { breadcrumbSchema, personId } from "@/lib/seo"
 
 type PageProps = {
   params: Promise<{ slug: string }>
@@ -23,35 +26,27 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {}
   }
 
-  const title = `${post.title} | Developer Blog`
+  const title = post.seoTitle ?? `${post.title} | ${siteConfig.name}`
   const description = post.description
 
   return {
-    title,
+    title: { absolute: title },
     description,
     category: post.category,
-    authors: [{ name: post.author.name, url: siteConfig.author.sameAs[1] }],
+    authors: [{ name: post.author.name, url: absoluteUrl("/about") }],
     creator: post.author.name,
     publisher: post.author.name,
     alternates: {
       canonical: `/blog/${post.slug}`,
     },
-    keywords: [...baseKeywords, ...geoKeywords, ...post.keywords],
+    keywords: [...baseKeywords, ...post.keywords],
     openGraph: {
       type: "article",
       title,
       description,
       url: absoluteUrl(`/blog/${post.slug}`),
-      images: [
-        {
-          url: post.ogImage,
-          width: 1200,
-          height: 630,
-          alt: post.title,
-        },
-      ],
       publishedTime: post.date,
-      modifiedTime: post.date,
+      modifiedTime: post.updated ?? post.date,
       section: post.category,
       tags: post.tags,
       authors: [post.author.name],
@@ -60,7 +55,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       card: "summary_large_image",
       title,
       description,
-      images: [post.ogImage],
     },
     robots: {
       index: true,
@@ -82,31 +76,72 @@ export function generateStaticParams() {
 
 export const dynamicParams = false
 
+const formatDate = (date: string) =>
+  new Date(`${date}T00:00:00`).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  })
+
+// Same category first, then newest; three cards keep the page focused.
+const getRelatedPosts = (post: BlogPost) =>
+  getBlogPosts()
+    .filter((item) => item.slug !== post.slug)
+    .sort((a, b) => {
+      const sameCategory =
+        Number(b.category === post.category) - Number(a.category === post.category)
+      return sameCategory || b.date.localeCompare(a.date)
+    })
+    .slice(0, 3)
+
+const headingId = (text: string) =>
+  text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+
+// Renders `backtick` spans as inline code instead of literal backticks.
+const renderInline = (text: string) =>
+  text.split(/(`[^`]+`)/g).map((part, index) =>
+    part.startsWith("`") && part.endsWith("`") ? (
+      <code key={index} className="blog-inline-code">
+        {part.slice(1, -1)}
+      </code>
+    ) : (
+      part
+    ),
+  )
+
 const renderBlock = (block: BlogContentBlock, index: number) => {
   switch (block.type) {
     case "heading":
       return (
-        <h2 key={index} className="blog-prose-heading">
+        <h2 key={index} id={headingId(block.text)} className="blog-prose-heading">
           {block.text}
         </h2>
       )
     case "paragraph":
       return (
         <p key={index} className="blog-prose-paragraph">
-          {block.text}
+          {renderInline(block.text)}
         </p>
       )
     case "list":
       return (
         <ul key={index} className="blog-prose-list">
           {block.items.map((item) => (
-            <li key={item}>{item}</li>
+            <li key={item}>{renderInline(item)}</li>
           ))}
         </ul>
       )
     case "code":
       return (
-        <pre key={index} className="blog-prose-code">
+        <pre
+          key={index}
+          className="blog-prose-code"
+          data-language={block.language}
+          aria-label={`${block.language} code example`}
+        >
           <code>{block.code}</code>
         </pre>
       )
@@ -116,7 +151,7 @@ const renderBlock = (block: BlogContentBlock, index: number) => {
       return (
         <aside key={index} className={`blog-callout blog-callout-${block.type}`}>
           <strong>{block.title}</strong>
-          <p>{block.text}</p>
+          <p>{renderInline(block.text)}</p>
         </aside>
       )
     case "quote":
@@ -138,17 +173,11 @@ export default async function BlogPostPage({ params }: PageProps) {
     notFound()
   }
 
-  const relatedPosts = getBlogPosts().filter((item) => item.slug !== post.slug)
-
-  const wordCount = post.content.reduce((total, block) => {
-    if (block.type === "list") {
-      return total + block.items.join(" ").split(/\s+/).length
-    }
-    if (block.type === "code") {
-      return total + block.code.split(/\s+/).length
-    }
-    return total + block.text.split(/\s+/).length
-  }, 0)
+  const relatedPosts = getRelatedPosts(post)
+  const wordCount = getWordCount(post)
+  const headings = post.content.filter(
+    (block): block is Extract<BlogContentBlock, { type: "heading" }> => block.type === "heading",
+  )
 
   const postSchema = {
     "@context": "https://schema.org",
@@ -163,49 +192,26 @@ export default async function BlogPostPage({ params }: PageProps) {
         headline: post.title,
         description: post.description,
         datePublished: post.date,
-        dateModified: post.date,
+        dateModified: post.updated ?? post.date,
         articleSection: post.category,
         wordCount,
-        author: {
-          "@type": "Person",
-          "@id": `${siteConfig.siteUrl}/#person`,
-          name: post.author.name,
-          url: siteConfig.siteUrl,
-          sameAs: siteConfig.author.sameAs,
+        author: { "@id": personId },
+        publisher: { "@id": personId },
+        image: {
+          "@type": "ImageObject",
+          url: absoluteUrl(`/blog/${post.slug}/opengraph-image`),
+          width: 1200,
+          height: 630,
         },
-        publisher: {
-          "@type": "Person",
-          "@id": `${siteConfig.siteUrl}/#person`,
-          name: post.author.name,
-        },
-        image: absoluteUrl(post.ogImage),
         url: absoluteUrl(`/blog/${post.slug}`),
-        keywords: [...post.keywords, ...geoKeywords].join(", "),
+        keywords: post.keywords.join(", "),
         inLanguage: "en-US",
       },
-      {
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          {
-            "@type": "ListItem",
-            position: 1,
-            name: "Home",
-            item: absoluteUrl("/"),
-          },
-          {
-            "@type": "ListItem",
-            position: 2,
-            name: "Blog",
-            item: absoluteUrl("/blog"),
-          },
-          {
-            "@type": "ListItem",
-            position: 3,
-            name: post.title,
-            item: absoluteUrl(`/blog/${post.slug}`),
-          },
-        ],
-      },
+      breadcrumbSchema([
+        { name: "Home", path: "/" },
+        { name: "Blog", path: "/blog" },
+        { name: post.title, path: `/blog/${post.slug}` },
+      ]),
       ...(post.faqs
         ? [
             {
@@ -228,23 +234,32 @@ export default async function BlogPostPage({ params }: PageProps) {
     <main className="blog-shell">
       <article className="blog-article">
         <header className="blog-article-header">
-          <div className="blog-breadcrumbs">
+          <nav className="blog-breadcrumbs" aria-label="Breadcrumb">
+            <Link href="/">Home</Link>
+            <span aria-hidden="true">/</span>
             <Link href="/blog">Blog</Link>
-            <span>/</span>
-            <span>{post.category}</span>
-          </div>
+            <span aria-hidden="true">/</span>
+            <span aria-current="page">{post.category}</span>
+          </nav>
           <h1 className="blog-title display-font">{post.title}</h1>
           <p className="blog-subtitle">{post.description}</p>
           <div className="blog-article-meta">
             <span className="blog-meta-chip">
-              <Calendar className="h-4 w-4" />
+              <Calendar className="h-4 w-4" aria-hidden="true" />
               <time dateTime={post.date}>{post.dateLabel}</time>
             </span>
+            {post.updated && post.updated !== post.date ? (
+              <span className="blog-meta-chip">
+                Updated <time dateTime={post.updated}>{formatDate(post.updated)}</time>
+              </span>
+            ) : null}
             <span className="blog-meta-chip">
-              <Clock className="h-4 w-4" />
+              <Clock className="h-4 w-4" aria-hidden="true" />
               {post.readTime}
             </span>
-            <span className="blog-meta-chip">{post.author.name}</span>
+            <Link className="blog-meta-chip" href="/about" rel="author">
+              By {post.author.name}
+            </Link>
           </div>
           <div className="blog-article-tags">
             {post.tags.map((tag) => (
@@ -277,6 +292,21 @@ export default async function BlogPostPage({ params }: PageProps) {
             </ul>
           </aside>
         )}
+
+        {headings.length >= 4 ? (
+          <nav className="blog-toc" aria-labelledby="toc-title">
+            <h2 id="toc-title" className="blog-toc-title">
+              In this article
+            </h2>
+            <ul>
+              {headings.map((heading) => (
+                <li key={heading.text}>
+                  <a href={`#${headingId(heading.text)}`}>{heading.text}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ) : null}
 
         <section className="blog-prose">{post.content.map(renderBlock)}</section>
 
@@ -312,21 +342,55 @@ export default async function BlogPostPage({ params }: PageProps) {
             </ul>
           </section>
         )}
+
+        <aside className="blog-author" aria-labelledby="author-title">
+          <Image
+            src={siteConfig.author.image}
+            alt={siteConfig.author.name}
+            width={72}
+            height={72}
+            className="blog-author-avatar"
+            // The global `img { height: auto }` rule would otherwise distort the circle.
+            style={{ width: 72, height: 72 }}
+          />
+          <div>
+            <h2 id="author-title" className="blog-author-name">
+              Written by{" "}
+              <Link href="/about" rel="author">
+                {siteConfig.author.name}
+              </Link>
+            </h2>
+            <p className="blog-author-role">{siteConfig.author.role}</p>
+            <p className="blog-author-bio">
+              {siteConfig.author.bio} He currently works as a Full Stack
+              Developer at {siteConfig.author.employer.name}.
+            </p>
+            <p className="blog-author-links">
+              <Link href="/about">About me</Link>
+              <a href={siteConfig.author.sameAs[1]} rel="me noopener noreferrer" target="_blank">
+                LinkedIn
+              </a>
+              <a href={siteConfig.author.sameAs[0]} rel="me noopener noreferrer" target="_blank">
+                GitHub
+              </a>
+            </p>
+          </div>
+        </aside>
       </article>
 
       <section className="blog-cta blog-cta-article">
         <div className="blog-cta-inner">
           <div>
-            <h3 className="blog-cta-title display-font">
-              Want this playbook for your team?
-            </h3>
+            <h2 className="blog-cta-title display-font">
+              Need help building something like this?
+            </h2>
             <p className="blog-cta-text">
-              I work with product teams across India to improve SEO, GEO
-              discoverability, and performance for developer content.
+              I build full-stack web and React Native apps for teams
+              worldwide, from the first API to the production release.
             </p>
           </div>
           <Link href="/contact" className="soft-btn soft-btn-accent soft-btn-fluid sm:w-auto">
-            Book a consultation
+            Start a project
           </Link>
         </div>
       </section>
@@ -337,8 +401,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             More from the blog
           </h2>
           <p className="blog-section-subtitle">
-            Explore additional notes for Next.js developers India and global
-            engineering teams.
+            Related articles on Next.js, React Native and full-stack delivery.
           </p>
         </div>
         <div className="blog-grid">
@@ -373,10 +436,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         </div>
       </section>
 
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(postSchema) }}
-      />
+      <JsonLd data={postSchema} />
     </main>
   )
 }

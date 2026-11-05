@@ -1,30 +1,48 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { absoluteUrl } from "@/lib/site";
-import banner from "../../Assets/fleetconnekt/fleetconnekt-banner.png";
-import screenOne from "../../Assets/fleetconnekt/fleetconnet-1.jpeg";
-import screenTwo from "../../Assets/fleetconnekt/fleetconnet-2.jpeg";
-import screenThree from "../../Assets/fleetconnekt/fleetconnet-3.jpeg";
-import screenFour from "../../Assets/fleetconnekt/fleetconnet-4.jpeg";
-import screenFive from "../../Assets/fleetconnekt/fleetconnet-5.jpeg";
-import screenSix from "../../Assets/fleetconnekt/fleetconnet-6.jpeg";
+import JsonLd from "@/components/JsonLd";
+import { absoluteUrl, siteConfig } from "@/lib/site";
+import { breadcrumbSchema, personId } from "@/lib/seo";
+import banner from "../../../Assets/fleetconnekt/fleetconnekt-logistics-app-banner.webp";
+import screenOne from "../../../Assets/fleetconnekt/fleetconnekt-splash-screen.webp";
+import screenTwo from "../../../Assets/fleetconnekt/fleetconnekt-sign-in-screen.webp";
+import screenThree from "../../../Assets/fleetconnekt/fleetconnekt-email-verification-screen.webp";
+import screenFour from "../../../Assets/fleetconnekt/fleetconnekt-home-screen.webp";
+import screenFive from "../../../Assets/fleetconnekt/fleetconnekt-transporter-directory.webp";
+import screenSix from "../../../Assets/fleetconnekt/fleetconnekt-transporter-profile.webp";
+
+const pageTitle = "FleetConnekt App: Logistics Case Study";
+const pageDescription =
+  "FleetConnekt app case study: a mobile logistics app for Indian highway transport with a verified transporter directory and digital LRs. See how it works.";
 
 export const metadata: Metadata = {
-  title: "FleetConnekt",
-  description:
-    "FleetConnekt is an Indian highway logistics platform for verified transporters and digital lorry receipt workflows.",
-  alternates: { canonical: "/fleetconnekt" },
+  title: pageTitle,
+  description: pageDescription,
+  alternates: { canonical: "/projects/fleetconnekt" },
   openGraph: {
-    title: "FleetConnekt | Kaushal Rathod",
-    description:
-      "A mobile-first logistics platform connecting verified transport agencies, documentation workflows, and route intelligence.",
-    url: absoluteUrl("/fleetconnekt"),
-    images: [{ url: banner.src, width: banner.width, height: banner.height, alt: "FleetConnekt mobile application" }],
+    type: "article",
+    title: `${pageTitle} | ${siteConfig.name}`,
+    description: pageDescription,
+    url: absoluteUrl("/projects/fleetconnekt"),
+    images: [{ url: banner.src, width: banner.width, height: banner.height, alt: "FleetConnekt mobile application screens" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${pageTitle} | ${siteConfig.name}`,
+    description: pageDescription,
+    images: [banner.src],
   },
 };
 
-const appScreens = [screenOne, screenTwo, screenThree, screenFour, screenFive, screenSix];
+const appScreens = [
+  { image: screenOne, alt: "FleetConnekt splash screen with the Move India Forward tagline and platform stats" },
+  { image: screenTwo, alt: "FleetConnekt sign-in screen for transport businesses" },
+  { image: screenThree, alt: "FleetConnekt email verification code screen" },
+  { image: screenFour, alt: "FleetConnekt home screen with transporter search and featured transporters" },
+  { image: screenFive, alt: "FleetConnekt transporter directory filtered by state, city and company" },
+  { image: screenSix, alt: "FleetConnekt verified transporter profile with fleet and capacity details" },
+];
 
 const services = [
   {
@@ -42,14 +60,41 @@ const services = [
 ];
 
 export default function FleetConnektPage() {
+  const fleetSchema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "@id": `${absoluteUrl("/projects/fleetconnekt")}#app`,
+        name: "FleetConnekt",
+        description:
+          "Mobile logistics platform for Indian highway transport with a verified transporter directory, digital lorry receipt generation and connected fleet operations.",
+        applicationCategory: "BusinessApplication",
+        applicationSubCategory: "Logistics",
+        operatingSystem: "Android",
+        url: absoluteUrl("/projects/fleetconnekt"),
+        image: absoluteUrl(banner.src),
+        screenshot: appScreens.map((screen) => absoluteUrl(screen.image.src)),
+        creator: { "@id": personId },
+        countriesSupported: "IN",
+      },
+      breadcrumbSchema([
+        { name: "Home", path: "/" },
+        { name: "Projects", path: "/projects" },
+        { name: "FleetConnekt", path: "/projects/fleetconnekt" },
+      ]),
+    ],
+  };
+
   return (
-    <div className="soft-grid-bg">
+    <main className="soft-grid-bg">
+      <JsonLd data={fleetSchema} />
       <section className="pt-24 lg:pt-32">
         <div className="mx-auto grid w-full max-w-6xl gap-8 px-4 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
           <div>
             <div className="section-label bg-[#ffeb3b]">Mobile application</div>
-            <h1 className="display-font mt-4 text-[clamp(2.4rem,8vw,5.3rem)] leading-[0.9]">
-              FleetConnekt
+            <h1 className="display-font mt-4 text-[clamp(2.2rem,6vw,4.25rem)] leading-[0.95]">
+              FleetConnekt: logistics app for Indian highway transport
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-7 text-black/75 sm:text-lg">
               FleetConnekt connects verified transport agencies, modern document workflows, and route intelligence in one platform built for the realities of Indian highway logistics.
@@ -83,16 +128,25 @@ export default function FleetConnektPage() {
         </div>
         <div className="fleet-marquee" aria-label="FleetConnekt mobile application screens">
           <div className="fleet-marquee-track">
-            {[...appScreens, ...appScreens].map((screen, index) => (
-              <div className="fleet-screen soft-card soft-shadow-sm" key={index}>
+            {[...appScreens, ...appScreens].map((screen, index) => {
+              // The second copy only exists to make the marquee loop seamlessly.
+              const isLoopCopy = index >= appScreens.length;
+
+              return (
+              <div
+                className="fleet-screen soft-card soft-shadow-sm"
+                key={index}
+                aria-hidden={isLoopCopy || undefined}
+              >
                 <Image
-                  src={screen}
-                  alt={`FleetConnekt app screen ${(index % appScreens.length) + 1}`}
+                  src={screen.image}
+                  alt={isLoopCopy ? "" : screen.alt}
                   className="h-full w-full object-cover"
                   sizes="(max-width: 640px) 190px, 240px"
                 />
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -146,8 +200,20 @@ export default function FleetConnektPage() {
               <li>The platform presents a modern, document-first approach to Indian highway logistics.</li>
             </ul>
           </aside>
+
+          <nav className="flex flex-wrap gap-3" aria-label="Related pages">
+            <Link className="soft-btn soft-btn-dark" href="/contact">
+              Discuss a similar app
+            </Link>
+            <Link className="soft-btn" href="/projects">
+              More projects by Kaushal Rathod
+            </Link>
+            <Link className="soft-btn" href="/skills">
+              React Native &amp; Expo skills
+            </Link>
+          </nav>
         </div>
       </section>
-    </div>
+    </main>
   );
 }

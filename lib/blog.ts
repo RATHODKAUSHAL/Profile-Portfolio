@@ -30,8 +30,12 @@ export type BlogContentBlock =
 export type BlogPost = {
   slug: string
   title: string
+  // Search title (50-60 chars incl. " | Kaushal Rathod") when the display title is too long.
+  seoTitle?: string
   description: string
   date: string
+  // Last content update (YYYY-MM-DD); used for dateModified and the sitemap.
+  updated?: string
   dateLabel: string
   readTime: string
   category: string
@@ -55,15 +59,6 @@ export type BlogPost = {
   content: BlogContentBlock[]
 }
 
-export const geoKeywords = [
-  "India developers",
-  "Gujarat developers",
-  "Ahmedabad developer community",
-  "JavaScript developers India",
-  "Next.js developers India",
-  "Full-stack developers India",
-]
-
 export const baseKeywords = [
   "developer blog",
   "full-stack engineering",
@@ -75,20 +70,45 @@ export const baseKeywords = [
   "system design",
 ]
 
-export const blogPosts: BlogPost[] = [
+// Read time is derived from the content (see withReadTime) so it can't drift.
+type BlogPostSource = Omit<BlogPost, "readTime">
+
+const WORDS_PER_MINUTE = 220
+
+const countWords = (text: string) => text.split(/\s+/).filter(Boolean).length
+
+export function getWordCount(post: Pick<BlogPost, "content" | "takeaways" | "faqs">) {
+  const blocks = post.content.reduce((total, block) => {
+    if (block.type === "list") return total + countWords(block.items.join(" "))
+    if (block.type === "code") return total + countWords(block.code)
+    if (block.type === "tip" || block.type === "note" || block.type === "example") {
+      return total + countWords(`${block.title} ${block.text}`)
+    }
+    return total + countWords(block.text)
+  }, 0)
+  const takeaways = countWords((post.takeaways ?? []).join(" "))
+  const faqs = countWords((post.faqs ?? []).map((faq) => `${faq.question} ${faq.answer}`).join(" "))
+  return blocks + takeaways + faqs
+}
+
+const withReadTime = (post: BlogPostSource): BlogPost => ({
+  ...post,
+  readTime: `${Math.max(1, Math.round(getWordCount(post) / WORDS_PER_MINUTE))} min read`,
+})
+
+const blogPostSources: BlogPostSource[] = [
   {
     slug: "today-i-learned-expo-react-native-push-notifications",
     title: "Today I Learned: Push Notifications in Expo React Native",
+    seoTitle: "Expo Push Notifications in React Native | Kaushal Rathod",
     description:
       "A practical walkthrough of Expo push notifications: permissions, Android channels, Expo push tokens, EAS credentials, listeners, testing, and lessons learned.",
     date: "2026-07-22",
     dateLabel: "July 22, 2026",
-    readTime: "9 min read",
     category: "Mobile Development",
     tags: ["Expo", "React Native", "Push Notifications", "Android"],
     keywords: [
       ...baseKeywords,
-      ...geoKeywords,
       "Expo push notifications",
       "React Native push notifications",
       "expo-notifications tutorial",
@@ -98,10 +118,10 @@ export const blogPosts: BlogPost[] = [
     ],
     author: {
       name: "Kaushal Rathod",
-      title: "Full Stack & Mobile Application Developer",
+      title: "Software Developer",
     },
-    coverImage: "/Images/image1.jpg",
-    ogImage: "/Images/image1.jpg",
+    coverImage: "/Images/laptop-coffee-workspace.webp",
+    ogImage: "/Images/laptop-coffee-workspace.webp",
     takeaways: [
       "Remote push notifications require a development build; Expo Go on Android does not support them from SDK 53 onward.",
       "Create an Android notification channel before requesting permission so the Android 13 prompt can appear correctly.",
@@ -265,26 +285,25 @@ export const blogPosts: BlogPost[] = [
   {
     slug: "full-stack-project-architecture-checklist-2026",
     title: "Full-Stack Project Architecture Checklist (2026 Edition)",
+    seoTitle: "Full-Stack Architecture Checklist (2026) | Kaushal Rathod",
     description:
-      "A practical architecture checklist for shipping maintainable full-stack apps with Next.js, Node.js, and PostgreSQL.",
+      "A practical 2026 checklist for full-stack architecture: module boundaries, typed data contracts, performance budgets and observability for Next.js apps.",
     date: "2026-02-20",
     dateLabel: "Feb 20, 2026",
-    readTime: "9 min read",
     category: "Architecture",
     tags: ["Full Stack", "Architecture", "Next.js"],
     keywords: [
       ...baseKeywords,
-      ...geoKeywords,
       "full stack architecture checklist",
       "next.js architecture",
       "scalable web app architecture",
     ],
     author: {
       name: "Kaushal Rathod",
-      title: "Full Stack Developer",
+      title: "Software Developer",
     },
-    coverImage: "/Images/Office.jpg",
-    ogImage: "/Images/Office.jpg",
+    coverImage: "/Images/office-desk-setup.webp",
+    ogImage: "/Images/office-desk-setup.webp",
     content: [
       {
         type: "paragraph",
@@ -353,26 +372,25 @@ export const blogPosts: BlogPost[] = [
   {
     slug: "nextjs-seo-geo-content-framework-for-portfolios",
     title: "Next.js SEO + GEO Content Framework for Developer Portfolios",
+    seoTitle: "Next.js SEO & GEO for Developer Portfolios | Kaushal Rathod",
     description:
-      "A repeatable content framework to help developer portfolios rank in search and get cited by AI assistants.",
+      "A repeatable Next.js content framework for developer portfolios: one intent per page, answer-first sections, and metadata paired with JSON-LD schema.",
     date: "2026-01-30",
     dateLabel: "Jan 30, 2026",
-    readTime: "8 min read",
     category: "SEO",
     tags: ["SEO", "GEO", "Content Strategy"],
     keywords: [
       ...baseKeywords,
-      ...geoKeywords,
       "developer portfolio seo",
       "geo content framework",
       "ai search optimization",
     ],
     author: {
       name: "Kaushal Rathod",
-      title: "Full Stack Developer",
+      title: "Software Developer",
     },
-    coverImage: "/Images/image3.jpg",
-    ogImage: "/Images/image3.jpg",
+    coverImage: "/Images/developer-coding-in-cafe.webp",
+    ogImage: "/Images/developer-coding-in-cafe.webp",
     content: [
       {
         type: "paragraph",
@@ -433,32 +451,30 @@ export const blogPosts: BlogPost[] = [
   {
     slug: "nextjs-performance-playbook-india",
     title: "Next.js Performance Playbook for Indian Developer Teams",
+    seoTitle: "Next.js Performance Playbook for Fast Apps | Kaushal Rathod",
     description:
-      "A practical guide for JavaScript developers in India to ship faster Next.js apps with smart caching, image strategy, and performance budgets.",
+      "A Next.js performance playbook: set performance budgets, cache at the edge with revalidation, and ship optimized images to improve Core Web Vitals.",
     date: "2025-12-18",
     dateLabel: "Dec 18, 2025",
-    readTime: "8 min read",
     category: "Next.js",
-    tags: ["Next.js", "Performance", "India Devs"],
+    tags: ["Next.js", "Performance", "Core Web Vitals"],
     keywords: [
       ...baseKeywords,
-      ...geoKeywords,
       "Next.js performance",
-      "IN developer teams",
       "SSR caching",
       "Core Web Vitals",
     ],
     author: {
       name: "Kaushal Rathod",
-      title: "Full Stack Developer",
+      title: "Software Developer",
     },
-    coverImage: "/Images/image1.jpg",
-    ogImage: "/Images/image1.jpg",
+    coverImage: "/Images/laptop-coffee-workspace.webp",
+    ogImage: "/Images/laptop-coffee-workspace.webp",
     content: [
       {
         type: "paragraph",
         text:
-          "This playbook is built for JavaScript developers in India who need consistent Next.js performance without over-engineering. It blends Core Web Vitals discipline with pragmatic choices that work for distributed teams across Gujarat, Ahmedabad, and beyond.",
+          "This playbook is for teams that need consistent Next.js performance without over-engineering. It blends Core Web Vitals discipline with pragmatic choices that hold up as a codebase and team grow.",
       },
       {
         type: "heading",
@@ -467,13 +483,13 @@ export const blogPosts: BlogPost[] = [
       {
         type: "paragraph",
         text:
-          "Define acceptable limits for LCP, CLS, and TBT early. Make it visible in every PR so the full-stack developers India teams can catch regressions before they reach production.",
+          "Define acceptable limits for the three Core Web Vitals (LCP, INP and CLS) early. Make them visible in every pull request so the team catches regressions before they reach production.",
       },
       {
         type: "tip",
         title: "Tip: Performance budget checklist",
         text:
-          "Agree on < 2.5s LCP for mobile, CLS < 0.1, and JS bundles under 180 KB for key routes.",
+          "Agree on LCP under 2.5s on mobile, INP under 200ms, CLS under 0.1, and JavaScript bundles under 180 KB for key routes.",
       },
       {
         type: "heading",
@@ -482,7 +498,7 @@ export const blogPosts: BlogPost[] = [
       {
         type: "paragraph",
         text:
-          "Prefer ISR or partial pre-rendering for content that changes weekly. It keeps the experience fast for the Ahmedabad developer community without sacrificing freshness.",
+          "Prefer static generation with revalidation (ISR) for content that changes daily or weekly. Pages are served from the cache instantly and refreshed in the background, so they stay fast without going stale.",
       },
       {
         type: "code",
@@ -494,7 +510,7 @@ export const blogPosts: BlogPost[] = [
         type: "note",
         title: "Note on bundle size",
         text:
-          "Audit third-party analytics scripts. In many India developer teams, the fastest win is removing unused SDKs.",
+          "Audit third-party analytics and tracking scripts. On many projects the fastest win is removing SDKs nobody uses anymore.",
       },
       {
         type: "heading",
@@ -509,38 +525,37 @@ export const blogPosts: BlogPost[] = [
         type: "example",
         title: "Example: consistent image sizes",
         text:
-          "Use 16:9 or 4:3 ratios across blog cards and hero sections, then set `sizes` to match your grid.",
+          "Use 16:9 or 4:3 ratios across blog cards and hero sections, then set `sizes` to match your grid so the browser downloads the right file.",
       },
     ],
   },
   {
     slug: "system-design-notes-for-geo-distributed-teams",
     title: "System Design Notes for Geo-Distributed Product Teams",
+    seoTitle: "API System Design for Distributed Teams | Kaushal Rathod",
     description:
-      "Notes on designing resilient APIs for teams across India, Gujarat, and global developer communities with clear ownership boundaries.",
+      "System design notes for distributed product teams: define service ownership early and use contract-first APIs so teams in many time zones avoid surprises.",
     date: "2025-11-29",
     dateLabel: "Nov 29, 2025",
-    readTime: "7 min read",
     category: "Architecture",
     tags: ["Architecture", "APIs", "Distributed Teams"],
     keywords: [
       ...baseKeywords,
-      ...geoKeywords,
       "system design",
       "service boundaries",
       "API resilience",
     ],
     author: {
       name: "Kaushal Rathod",
-      title: "Full Stack Developer",
+      title: "Software Developer",
     },
-    coverImage: "/Images/image2.jpg",
-    ogImage: "/Images/image2.jpg",
+    coverImage: "/Images/laptop-working-from-cafe.webp",
+    ogImage: "/Images/laptop-working-from-cafe.webp",
     content: [
       {
         type: "paragraph",
         text:
-          "When teams span India developers, Gujarat developers, and global partners, system design clarity becomes a growth multiplier. These notes focus on ownership, observability, and pragmatic SLA design.",
+          "When a product team is spread across offices and time zones, system design clarity becomes a growth multiplier. These notes focus on ownership, API contracts and pragmatic reliability targets.",
       },
       {
         type: "heading",
@@ -549,13 +564,13 @@ export const blogPosts: BlogPost[] = [
       {
         type: "paragraph",
         text:
-          "Every service should have a single accountable team with a clear on-call rotation. It avoids blurred responsibility across full-stack developers India squads.",
+          "Every service should have a single accountable team with a clear on-call rotation. That avoids blurred responsibility when an incident happens outside one team's working hours.",
       },
       {
         type: "note",
         title: "Ownership map",
         text:
-          "Publish a simple ownership table in your repo so new Ahmedabad developers can ramp up fast.",
+          "Publish a simple ownership table in your repo so new developers know who to ask about each service.",
       },
       {
         type: "heading",
@@ -589,31 +604,30 @@ export const blogPosts: BlogPost[] = [
   {
     slug: "frontend-writing-for-developer-communities",
     title: "Frontend Writing That Resonates with Developer Communities",
+    seoTitle: "Technical Writing for Developer Blogs | Kaushal Rathod",
     description:
-      "How to craft technical blog posts, examples, and CTAs that engage the Ahmedabad developer community and JavaScript developers in India.",
+      "How to write frontend and technical blog posts developers actually read: lead with outcomes, use concrete code examples, and end with a clear next step.",
     date: "2025-10-11",
     dateLabel: "Oct 11, 2025",
-    readTime: "6 min read",
     category: "Content",
     tags: ["Content", "Developer Experience", "Community"],
     keywords: [
       ...baseKeywords,
-      ...geoKeywords,
       "developer content strategy",
       "technical writing",
       "developer advocacy",
     ],
     author: {
       name: "Kaushal Rathod",
-      title: "Full Stack Developer",
+      title: "Software Developer",
     },
-    coverImage: "/Images/image3.jpg",
-    ogImage: "/Images/image3.jpg",
+    coverImage: "/Images/developer-coding-in-cafe.webp",
+    ogImage: "/Images/developer-coding-in-cafe.webp",
     content: [
       {
         type: "paragraph",
         text:
-          "Developer communities in India respond best to clear outcomes, quick wins, and grounded examples. This post breaks down how to write with that expectation in mind.",
+          "Developers respond best to clear outcomes, quick wins and grounded examples. This post breaks down how to write technical content with that expectation in mind.",
       },
       {
         type: "heading",
@@ -622,7 +636,7 @@ export const blogPosts: BlogPost[] = [
       {
         type: "paragraph",
         text:
-          "Start each section with the result readers will get. It keeps JavaScript developers India focused and engaged.",
+          "Start each section with the result readers will get. It tells them immediately whether the section is worth their time.",
       },
       {
         type: "tip",
@@ -654,6 +668,8 @@ export const blogPosts: BlogPost[] = [
     ],
   },
 ]
+
+export const blogPosts: BlogPost[] = blogPostSources.map(withReadTime)
 
 export const getBlogPosts = () => blogPosts
 
