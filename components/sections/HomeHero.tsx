@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 const statItems = [
-  { label: "Experience", value: "2+ Years" },
+  { label: "Experience", value: "3+ Years" },
   { label: "Projects", value: "10+ Shipped" },
   { label: "Focus", value: "Full Stack" },
 ];
@@ -14,12 +14,12 @@ export default function HomeHero() {
         <div className="col-span-12 flex flex-col gap-5 sm:gap-6 lg:col-span-7">
           <span className="section-label bg-[#ffeb3b]">Kaushal Rathod</span>
           <h1 className="display-font text-[clamp(2.1rem,10vw,5.25rem)] leading-[0.95] tracking-tight">
-            Full Stack Developer
+            Full Stack &amp; Mobile App Developer
           </h1>
           <p className="max-w-xl text-base text-black/75 sm:text-lg">
-            I am a full stack developer specializing in Next.js, React,
-            Node.js, and TypeScript. I design and build fast, accessible web
-            applications that are reliable in production.
+            I&apos;m Kaushal Rathod, a developer based in Ahmedabad, India. I build
+            fast, accessible web and mobile products with Next.js, React,
+            Node.js, TypeScript, React Native, and Expo.
           </p>
           <div className="flex flex-wrap items-center gap-3 sm:gap-4">
             <Link className="soft-btn soft-btn-accent soft-btn-fluid sm:w-auto" href="/projects">

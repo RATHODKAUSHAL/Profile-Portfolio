@@ -3,8 +3,10 @@ import { Fira_Code, Open_Sans } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import ClientLayout from "@/components/ClientLayout"
+import JsonLd from "@/components/JsonLd"
 import Script from "next/script"
 import { absoluteUrl, siteConfig } from "@/lib/site"
+import { personId, websiteId } from "@/lib/seo"
 
 // Fonts
 const firaCode = Fira_Code({
@@ -39,10 +41,15 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   keywords: siteConfig.keywords,
-  authors: [{ name: siteConfig.author.name }],
+  authors: [{ name: siteConfig.author.name, url: "/about" }],
   creator: siteConfig.author.name,
+  publisher: siteConfig.author.name,
+  category: "technology",
   alternates: {
     canonical: "/",
+    types: {
+      "application/rss+xml": [{ url: "/feed.xml", title: "Kaushal Rathod's developer blog" }],
+    },
   },
   icons: {
     icon: "/Images/user.png",
@@ -58,8 +65,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/Images/profileimage.jpeg",
-        width: 1200,
-        height: 630,
+        width: 1600,
+        height: 1200,
         alt: "Kaushal Rathod portfolio preview",
       },
     ],
@@ -87,10 +94,9 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  // 
-  //  verification: {
-  //   google: "GianrNYJnwhD4DHgw_SMpVb-c5zT7GFtPq_vKJs98do",
-  // },
+  verification: {
+    google: "GianrNYJnwhD4DHgw_SMpVb-c5zT7GFtPq_vKJs98do",
+  },
 }
 
 export default function RootLayout({
@@ -101,13 +107,19 @@ export default function RootLayout({
   const personSchema = {
     "@context": "https://schema.org",
     "@type": "Person",
-    "@id": `${siteConfig.siteUrl}/#person`,
+    "@id": personId,
     name: siteConfig.author.name,
     jobTitle: siteConfig.author.role,
     url: siteConfig.siteUrl,
     image: absoluteUrl(siteConfig.author.image),
     email: siteConfig.author.email,
     sameAs: siteConfig.author.sameAs,
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: siteConfig.author.location.city,
+      addressRegion: siteConfig.author.location.region,
+      addressCountry: siteConfig.author.location.countryCode,
+    },
     knowsAbout: [
       "Next.js",
       "React",
@@ -124,15 +136,17 @@ export default function RootLayout({
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": websiteId,
     name: siteConfig.name,
+    alternateName: "Kaushal Rathod Portfolio",
     url: siteConfig.siteUrl,
     description: siteConfig.description,
     author: {
       "@type": "Person",
-      "@id": `${siteConfig.siteUrl}/#person`,
+      "@id": personId,
       name: siteConfig.author.name,
     },
-    publisher: { "@id": `${siteConfig.siteUrl}/#person` },
+    publisher: { "@id": personId },
     inLanguage: "en-US",
   }
 
@@ -154,14 +168,7 @@ export default function RootLayout({
           gtag('config', 'G-779KQ6LCER');
         `}
       </Script>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
-        />
+        <JsonLd data={[personSchema, websiteSchema]} />
         <ThemeProvider
           attribute="class"
           defaultTheme="light"

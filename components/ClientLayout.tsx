@@ -32,9 +32,9 @@ const ClientLayout = ({ children }: { children: React.ReactNode }) => {
     <>
       <div className={`transition-opacity duration-500 ${isLoading ? "opacity-0" : "opacity-100"}`}>
         <Header />
-        <main className="min-h-screen">
+        <div className="min-h-screen">
           {children}
-        </main>
+        </div>
         <Footer />
       </div>
     </>

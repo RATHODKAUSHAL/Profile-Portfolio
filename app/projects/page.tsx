@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import JsonLd from "@/components/JsonLd";
 import { absoluteUrl, siteConfig } from "@/lib/site";
+import { breadcrumbSchema, personId } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Projects",
+  title: "Full-Stack & Mobile App Projects",
   description:
     "Production projects by Kaushal Rathod across logistics, dashboards, and e-commerce platforms using Next.js, React, and Node.js.",
   alternates: {
@@ -18,8 +20,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/Images/48jobs.png",
-        width: 1200,
-        height: 630,
+        width: 1902,
+        height: 941,
         alt: "Project showcase by Kaushal Rathod",
       },
     ],
@@ -35,6 +37,7 @@ const projects = [
     technologies: ["Next.js", "Node.js", "PostgreSQL", "REST APIs"],
     outcome:
       "Improved hiring flow automation with better candidate discovery and admin control.",
+    href: "/contact",
   },
   {
     title: "Trukky Learning Management System",
@@ -44,6 +47,7 @@ const projects = [
     technologies: ["Laravel", "React", "TypeScript", "MySQL"],
     outcome:
       "Enabled structured training delivery and reduced onboarding friction for teams.",
+    href: "/contact",
   },
   {
     title: "Zestify E-commerce Experience",
@@ -53,6 +57,17 @@ const projects = [
     technologies: ["Next.js", "Prisma", "PostgreSQL", "Tailwind CSS"],
     outcome:
       "Delivered faster storefront performance and maintainable admin tooling.",
+    href: "/contact",
+  },
+  {
+    title: "FleetConnekt Logistics Platform",
+    image: "/Images/48jobs.png",
+    description:
+      "A mobile-first Indian highway logistics platform with a verified transporter directory and digital lorry receipt workflows.",
+    technologies: ["Mobile App", "Logistics", "Digital Lorry Receipts"],
+    outcome:
+      "Combined transporter discovery, route information, and freight documentation in one operational experience.",
+    href: "/fleetconnekt",
   },
 ];
 
@@ -77,51 +92,50 @@ const faqs = [
 export default function ProjectsPage() {
   const projectsSchema = {
     "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    name: "Projects by Kaushal Rathod",
-    url: absoluteUrl("/projects"),
-    hasPart: projects.map((project) => ({
-      "@type": "CreativeWork",
-      name: project.title,
-      description: project.description,
-      creator: {
-        "@type": "Person",
-        name: siteConfig.author.name,
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": `${absoluteUrl("/projects")}#page`,
+        name: "Full-stack and mobile app projects by Kaushal Rathod",
+        description: metadata.description,
+        url: absoluteUrl("/projects"),
+        about: { "@id": personId },
+        hasPart: projects.map((project, index) => ({
+          "@type": "CreativeWork",
+          "@id": `${absoluteUrl("/projects")}#project-${index + 1}`,
+          name: project.title,
+          description: project.description,
+          creator: { "@id": personId },
+          image: absoluteUrl(project.image),
+          url: absoluteUrl(project.href),
+          keywords: project.technologies.join(", "),
+        })),
       },
-      image: absoluteUrl(project.image),
-      keywords: project.technologies.join(", "),
-    })),
-  };
-
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((faq) => ({
-      "@type": "Question",
-      name: faq.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: faq.answer,
+      {
+        "@type": "FAQPage",
+        "@id": `${absoluteUrl("/projects")}#faq`,
+        mainEntity: faqs.map((faq) => ({
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: { "@type": "Answer", text: faq.answer },
+        })),
       },
-    })),
+      breadcrumbSchema([
+        { name: "Home", path: "/" },
+        { name: "Projects", path: "/projects" },
+      ]),
+    ],
   };
 
   return (
-    <div className="soft-grid-bg">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(projectsSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
+    <main className="soft-grid-bg">
+      <JsonLd data={projectsSchema} />
       <section className="pt-24 lg:pt-32">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 sm:px-6">
           <header>
             <div className="section-label bg-[#ffeb3b]">Projects</div>
             <h1 className="display-font text-[clamp(2rem,8vw,4.25rem)] leading-[0.95]">
-              Full stack projects with measurable outcomes.
+              Full-stack and mobile projects with clear outcomes.
             </h1>
             <p className="mt-4 max-w-3xl text-base text-black/75 sm:text-lg">
               This project portfolio highlights production work I have delivered
@@ -155,8 +169,8 @@ export default function ProjectsPage() {
                     </span>
                   ))}
                 </div>
-                <Link className="soft-btn soft-btn-dark soft-btn-fluid w-full sm:w-fit" href="/contact">
-                  Discuss Similar Project
+                <Link className="soft-btn soft-btn-dark soft-btn-fluid w-full sm:w-fit" href={project.href}>
+                  {project.href === "/fleetconnekt" ? "View Case Study" : "Discuss Similar Project"}
                 </Link>
               </article>
             ))}
@@ -177,6 +191,6 @@ export default function ProjectsPage() {
           </section>
         </div>
       </section>
-    </div>
+    </main>
   );
 }
